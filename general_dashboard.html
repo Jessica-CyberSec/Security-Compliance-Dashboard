@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Week 7 – General Compliance Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="dashboard_sheetdb_final.js" defer></script>
+</head>
+<body>
+  <header>
+    <h2>📊 Week 7 – Compliance Dashboard</h2>
+    <p>Access Level: <span id="userRole">[Select a role below]</span></p>
+  </header>
+
+  <section class="filters">
+    <label>Role:
+      <select id="roleFilter">
+        <option value="">-- Select Role --</option>
+        <option value="HR">HR</option>
+        <option value="Admin">Security Admin</option>
+      </select>
+    </label>
+    <label>Department:
+      <select id="departmentFilter">
+        <option>All</option>
+        <option>IT</option>
+        <option>Retail</option>
+        <option>HR</option>
+      </select>
+    </label>
+    <label>Risk Tier:
+      <select id="riskFilter">
+        <option>All</option>
+        <option>Low</option>
+        <option>Medium</option>
+        <option>High</option>
+      </select>
+    </label>
+    <label>Time Period:
+      <select id="timeFilter">
+        <option>Last 7 Days</option>
+        <option>Last 30 Days</option>
+        <option>Custom</option>
+      </select>
+    </label>
+  </section>
+
+  <main>
+    <div class="info-box">
+      <h3>📈 Compliance Overview</h3>
+      <canvas id="progressChart"></canvas>
+    </div>
+
+    <div class="info-box" id="alerts">
+      <h3>🚨 Alerts</h3>
+      <ul id="alertList"></ul>
+    </div>
+
+    <div class="info-box" id="reports">
+      <h3>📄 Reports</h3>
+      <button onclick="exportReport('csv')">Export CSV</button>
+      <button onclick="exportReport('pdf')">Export PDF</button>
+    </div>
+  </main>
+</body>
+</html>
