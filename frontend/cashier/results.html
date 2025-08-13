@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz Results</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #0b0f19; color: #e6eaf2; margin:0; }
+    header { padding: 16px 24px; }
+    main { display:grid; place-items:center; min-height: 60vh; }
+    .card { background:#121829; border:1px solid #1e293b; border-radius:16px; padding:24px; width:min(680px, 90vw); text-align:center; }
+    .btn { border:none; padding:10px 16px; border-radius:10px; background:#3b82f6; color:#fff; cursor:pointer; }
+    .muted { color:#a7b0c0; }
+  </style>
+</head>
+<body>
+  <header><h1>Quiz Results</h1></header>
+  <main>
+    <div class="card">
+      <h2 id="titleLine">User - Module</h2>
+      <p id="scoreLine" class="muted"></p>
+      <button id="backBtn" class="btn">Return to Dashboard</button>
+    </div>
+  </main>
+
+  <script>
+    const p = new URLSearchParams(location.search);
+
+    // Pull identity (accept both new/old param names; fall back to localStorage)
+    const displayName = p.get("username")
+                      || p.get("name")
+                      || localStorage.getItem("display_name")
+                      || localStorage.getItem("name")
+                      || "User";
+
+    const jobId = p.get("jobid")
+                || p.get("user_id")
+                || localStorage.getItem("user_id")
+                || "";
+
+    const roleRaw = (p.get("role") || localStorage.getItem("role") || "cashier").trim();
+    const role = roleRaw.toLowerCase();
+
+    const moduleName = p.get("module")
+                    || p.get("completed")
+                    || localStorage.getItem("lastModule")
+                    || "Unknown Module";
+
+    const score = p.get("score")
+                || localStorage.getItem("lastScore")
+                || "";
+
+    // Persist a bit for future pages
+    localStorage.setItem("name", displayName);
+    localStorage.setItem("display_name", displayName);
+    if (role)   localStorage.setItem("role", role);
+    if (jobId)  localStorage.setItem("user_id", jobId);
+    localStorage.setItem("lastModule", moduleName);
+    if (score)  localStorage.setItem("lastScore", score);
+
+    // UI
+    document.getElementById("titleLine").textContent = `${displayName} - ${moduleName}`;
+    document.getElementById("scoreLine").textContent = score ? `Score: ${score}` : "";
+
+    // role -> folder (URL-encoded where needed)
+    const ROLE_FOLDER = {
+      "cashier": "cashier",
+      "supervisor": "supervisor",
+      "management": "management",
+      "stock staff": "stock%20staff" // encode space
+    };
+    const folder = ROLE_FOLDER[role] || "cashier";
+
+    // Always go to training_dashboard.html in that folder (no ?back override)
+    document.getElementById("backBtn").onclick = () => {
+      const qp = new URLSearchParams({
+        username: displayName,
+        name: displayName,     // for older pages
+        jobid: jobId,
+        user_id: jobId,        // for older pages
+        role: roleRaw,
+        completed: moduleName
+      });
+      if (score) qp.set("score", score);
+
+      // root‑absolute avoids accidental folder duplication
+      location.href = `${location.origin}/${folder}/training_dashboard.html?${qp.toString()}`;
+    };
+  </script>
+</body>
+</html>
+

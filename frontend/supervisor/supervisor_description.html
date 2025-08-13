@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🛡️ Supervisor Training — Descriptions</title>
+  <link rel="stylesheet" href="../style_updated_v2.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f6f7fb; color: #222; margin:0; }
+    header {
+      background: linear-gradient(135deg, #6a1b9a, #8e24aa 45%, #ab47bc);
+      color: #fff; padding: 28px 20px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+      box-shadow: 0 10px 30px rgba(106,27,154,.25);
+    }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    .sub { opacity:.95; margin:6px 0 0; }
+    .crumbs { font-size: 13px; opacity:.85; margin-bottom: 14px; }
+    .crumbs a { color: #fff; text-decoration: underline dotted; }
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(320px,1fr)); gap: 18px; margin-top: 18px;
+    }
+    .card {
+      background:#fff; border-radius:16px; padding:20px; box-shadow: 0 8px 18px rgba(0,0,0,.06);
+      border: 1px solid #eee;
+    }
+    .card h3 { margin: 0 0 8px; color:#6a1b9a; }
+    .pillbar { display:flex; gap:8px; flex-wrap: wrap; margin: 8px 0 14px; }
+    .pill { font-size:12px; padding:6px 10px; border-radius:999px; background:#f3e5f5; color:#6a1b9a; border:1px solid #ecd6f0; }
+    .meta { display:flex; gap:10px; flex-wrap:wrap; margin: 8px 0 14px;}
+    .badge { font-size:12px; padding:6px 10px; border-radius:10px; background:#e3f2fd; color:#1e88e5; border:1px solid #d3e9fb; }
+    .xp { background:#fff8e1; color:#ff8f00; border-color:#ffecb3; }
+    .lvl { background:#e8f5e9; color:#2e7d32; border-color:#dcedc8; }
+    .danger { background:#ffebee; color:#c62828; border-color:#ffcdd2; }
+    .cta {
+      display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px;
+    }
+    .btn {
+      border:0; cursor:pointer; border-radius:12px; padding:12px 16px; font-weight:600;
+      transition: transform .05s ease, box-shadow .2s ease;
+    }
+    .btn-primary { background:#6a1b9a; color:#fff; box-shadow: 0 6px 16px rgba(106,27,154,.25); }
+    .btn-secondary { background:#f1eef7; color:#5e35b1; }
+    .btn:active { transform: translateY(1px); }
+    .status {
+      display:flex; align-items:center; gap:10px; margin-top: 10px; font-size:14px;
+    }
+    .dot { width:10px; height:10px; border-radius:50%; background:#cfd8dc; }
+    .dot.done { background:#43a047; }
+    .dot.pending { background:#ffa000; }
+    .dot.none { background:#b0bec5; }
+    .desc { color:#333; line-height:1.55; }
+    .list { margin:10px 0 0 18px; }
+    .foot {
+      display:flex; align-items:center; justify-content:space-between; margin-top: 26px; gap:10px;
+    }
+    .tiny { font-size:12px; color:#607d8b; }
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background:#eceff1; color:#37474f; padding:2px 6px; border-radius:6px; font-size:12px;
+    }
+    .backbar { text-align:center; margin: 26px 0 40px; }
+    .back { background:#ffffff; color:#6a1b9a; border:1px solid #eadcf5; }
+    .back:hover { box-shadow: 0 6px 16px rgba(106,27,154,.15); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="crumbs">🏠 <a id="crumbHome" href="./training_dashboard.html">Supervisor Dashboard</a> • Descriptions</div>
+      <h1>Supervisor Training — Descriptions</h1>
+      <p class="sub" id="welcome">Welcome! Review modules, earn badges, and boost your team’s security posture.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+
+      <!-- RBAC CARD -->
+      <section class="card" id="rbacCard">
+        <h3>🔐 Role‑Based Access Control (RBAC) & Permissions</h3>
+        <div class="pillbar">
+          <span class="pill">Supervisor</span>
+          <span class="pill">Access Governance</span>
+          <span class="pill">Least Privilege</span>
+        </div>
+        <p class="desc">
+          Learn how to assign access based on roles, manage transitions, and conduct access reviews.
+          Apply RBAC to prevent misuse and reduce insider risk.
+        </p>
+        <ul class="list">
+          <li>Grant only what’s needed; remove stale access fast.</li>
+          <li>Monthly reviews with IT for accuracy and drift.</li>
+          <li>Lock down sensitive folders & shared drives.</li>
+        </ul>
+        <div class="meta">
+          <span class="badge xp">+80 XP</span>
+          <span class="badge lvl">Badge: Access Auditor</span>
+          <span class="badge">Est. 10–12 mins</span>
+        </div>
+
+        <div class="status">
+          <span class="dot" id="rbacDot"></span>
+          <span id="rbacStatusText">Status: Not started</span>
+          <span class="tiny" id="rbacScoreHint"></span>
+        </div>
+
+        <div class="cta">
+          <button class="btn btn-primary" onclick="openTraining('role-based-access-training-supervisor.html')">Open Module</button>
+          <button class="btn btn-secondary" onclick="openQuiz('quiz-role-based-access-supervisor.html')">Take Quiz</button>
+        </div>
+      </section>
+
+      <!-- INCIDENT RESPONSE CARD -->
+      <section class="card" id="irCard">
+        <h3>🚨 Monitoring & Responding to Cyber Incidents</h3>
+        <div class="pillbar">
+          <span class="pill">Supervisor</span>
+          <span class="pill">Incident Handling</span>
+          <span class="pill danger">High Impact</span>
+        </div>
+        <p class="desc">
+          Detect early warning signs, document accurately, escalate quickly, and support containment.
+          Become the steady hand when things get weird.
+        </p>
+        <ul class="list">
+          <li>Document who/what/when/how immediately.</li>
+          <li>Notify security without delay—false alarms are okay.</li>
+          <li>Isolate affected devices if instructed by IT.</li>
+        </ul>
+        <div class="meta">
+          <span class="badge xp">+90 XP</span>
+          <span class="badge lvl">Badge: Incident Commander</span>
+          <span class="badge">Est. 10–12 mins</span>
+        </div>
+
+        <div class="status">
+          <span class="dot" id="irDot"></span>
+          <span id="irStatusText">Status: Not started</span>
+          <span class="tiny" id="irScoreHint"></span>
+        </div>
+
+        <div class="cta">
+          <button class="btn btn-primary" onclick="openTraining('incident-response-training-supervisor.html')">Open Module</button>
+          <button class="btn btn-secondary" onclick="openQuiz('quiz-incident-response-supervisor.html')">Take Quiz</button>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="foot">
+      <span class="tiny">Tip: You can return here anytime from your dashboard • Use <span class="kbd">Ctrl</span>/<span class="kbd">Cmd</span>+<span class="kbd">K</span> to search in-page.</span>
+      <div class="tiny" id="identity"></div>
+    </div>
+
+    <div class="backbar">
+      <button class="btn back" onclick="goBack()">⬅️ Back to Supervisor Dashboard</button>
+    </div>
+  </main>
+
+  <script>
+    // --- URL params for personalization ---
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name') || '';
+    const jobid = params.get('jobid') || '';
+    const role = (params.get('role') || 'Supervisor').trim();
+
+    // Welcome line + identity footer
+    const welcomeEl = document.getElementById('welcome');
+    const identityEl = document.getElementById('identity');
+    if (name || jobid) {
+      welcomeEl.textContent = `Hi${name ? ' ' + name : ''}! Review modules, earn badges, and boost your team’s security posture.`;
+      identityEl.textContent = `${name ? '👤 ' + name : ''}${name && jobid ? ' • ' : ''}${jobid ? '🆔 ' + jobid : ''} • 🧩 Role: ${role}`;
+    } else {
+      identityEl.textContent = `🧩 Role: ${role}`;
+    }
+
+    // Breadcrumb to the right dashboard
+    const home = document.getElementById('crumbHome');
+    home.href = `./training_dashboard.html${params.toString() ? '?' + params.toString() : ''}`;
+
+    // --- Status helpers using localStorage (from central results.html) ---
+    const results = JSON.parse(localStorage.getItem('quizResults') || '[]'); // [{username, jobid, topic, score:"x/5", date, role?}]
+    const completed = JSON.parse(localStorage.getItem('completedTrainings') || '[]'); // [topic strings]
+
+    // Map display titles to the topic strings your quiz pages pass to results.html
+    const TOPICS = {
+      rbac: [
+        'Role-Based Access Control (RBAC) and Permissions',
+        'RBAC (Supervisor)',
+        'Role-Based Access Control — Supervisor'
+      ],
+      incident: [
+        'Monitoring and Responding to Cyber Incidents',
+        'Incident Response (Supervisor)',
+        'Cyber Incident Response — Supervisor'
+      ]
+    };
+
+    function bestScoreFor(topics) {
+      let best = -1;
+      let latest = null;
+      results.forEach(r => {
+        if (r && topics.includes(r.topic)) {
+          const s = (typeof r.score === 'string' && r.score.includes('/'))
+            ? parseInt(r.score.split('/')[0], 10)
+            : parseInt(r.score, 10) || 0;
+          if (s > best) { best = s; latest = r; }
+        }
+      });
+      return { best, latest };
+    }
+
+    function isCompleted(topics) {
+      return topics.some(t => completed.includes(t));
+    }
+
+    function updateCard({ topics, dotEl, statusEl, hintEl }) {
+      const { best, latest } = bestScoreFor(topics);
+      const done = isCompleted(topics) || best >= 3; // treat >=3/5 as "completed" for status
+
+      dotEl.classList.remove('done', 'pending', 'none');
+      if (best >= 4) {
+        dotEl.classList.add('done');
+        statusEl.textContent = 'Status: Completed';
+      } else if (best >= 1 || done) {
+        dotEl.classList.add('pending');
+        statusEl.textContent = 'Status: In progress';
+      } else {
+        dotEl.classList.add('none');
+        statusEl.textContent = 'Status: Not started';
+      }
+
+      if (best >= 0) {
+        const scoreText = best >= 0 ? `Best score: ${best}/5` : '';
+        const dateText = latest && latest.date ? ` • Last: ${latest.date}` : '';
+        hintEl.textContent = scoreText + dateText;
+      } else {
+        hintEl.textContent = '';
+      }
+    }
+
+    // RBAC status
+    updateCard({
+      topics: TOPICS.rbac,
+      dotEl: document.getElementById('rbacDot'),
+      statusEl: document.getElementById('rbacStatusText'),
+      hintEl: document.getElementById('rbacScoreHint')
+    });
+
+    // Incident Response status
+    updateCard({
+      topics: TOPICS.incident,
+      dotEl: document.getElementById('irDot'),
+      statusEl: document.getElementById('irStatusText'),
+      hintEl: document.getElementById('irScoreHint')
+    });
+
+    // Navigation helpers (preserve params)
+    function withParams(url) {
+      return params.toString() ? `${url}?${params.toString()}` : url;
+    }
+    function openTraining(url) { window.location.href = withParams(url); }
+    function openQuiz(url) { window.location.href = withParams(url); }
+    function goBack() { window.location.href = withParams('./training_dashboard.html'); }
+  </script>
+</body>
+</html>
+
+

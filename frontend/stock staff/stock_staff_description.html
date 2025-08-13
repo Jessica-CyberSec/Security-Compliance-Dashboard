@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📦 Stock Staff • Training Descriptions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../style_updated_v2.css" />
+  <style>
+    :root{
+      --primary:#6a1b9a;
+      --primary-dark:#4a148c;
+      --accent:#7b1fa2;
+      --card:#ffffff;
+      --bg-grad: linear-gradient(135deg,#fce4ec,#f3e5f5);
+      --ok:#2e7d32;
+      --warn:#ef6c00;
+      --muted:#6c757d;
+    }
+    body{
+      font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+      margin:0; padding:0;
+      background: var(--bg-grad);
+      color:#333;
+    }
+    .wrap{
+      max-width: 1100px; margin: 40px auto; padding: 16px;
+    }
+    .hero{
+      background:#fff; border-radius:20px; padding:28px;
+      box-shadow: 0 12px 28px rgba(0,0,0,.08);
+      display:flex; flex-wrap:wrap; align-items:center; gap:18px;
+    }
+    .hero h2{color:var(--primary); margin:0 0 6px;}
+    .sub{color:#555; margin:6px 0 0;}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      background:#f3e5f5; color:var(--primary-dark);
+      border-radius:999px; padding:8px 14px; font-weight:600; font-size:14px;
+    }
+    .meta{
+      margin-left:auto; text-align:right; min-width:220px;
+    }
+    .meta p{margin:4px 0; font-size:14px; color:#444}
+    .bar{
+      height:10px; background:#eee; border-radius:999px; overflow:hidden; margin-top:8px;
+    }
+    .bar > span{
+      display:block; height:100%; width:0%;
+      background:linear-gradient(90deg, var(--primary), #ab47bc);
+      transition: width .6s ease;
+    }
+
+    .grid{
+      display:grid; gap:18px; margin-top:22px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .card{
+      background:var(--card); border-radius:16px; padding:20px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.06);
+      display:flex; flex-direction:column; gap:10px;
+      transition: transform .15s ease, box-shadow .2s ease;
+    }
+    .card:hover{ transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,.08); }
+    .card h3{ margin:0; color:var(--primary-dark); display:flex; align-items:center; gap:8px; }
+    .badge{
+      margin-left:auto;
+      background:#ffe082; color:#7a5a00; font-weight:700;
+      border-radius:999px; padding:4px 10px; font-size:12px;
+    }
+    ul, ol{ margin:0 0 0 18px; }
+    li{ margin:6px 0; }
+    .row{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap; color:#555; font-size:14px;
+    }
+    .chip{
+      background:#f5f5f5; border-radius:999px; padding:6px 10px;
+    }
+    .ok{ color:var(--ok); }
+    .warn{ color:var(--warn); }
+
+    .actions{
+      display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;
+    }
+    .button{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:12px 18px; border:none; cursor:pointer;
+      background:var(--primary); color:#fff; border-radius:12px; font-weight:700;
+      transition: background .2s ease, transform .05s ease;
+      text-decoration:none;
+    }
+    .button:hover{ background:var(--primary-dark); }
+    .button:active{ transform: translateY(1px); }
+    .button.ghost{
+      background:#ede7f6; color:var(--primary-dark);
+    }
+    .muted{
+      color:var(--muted); font-size:13px; margin-top:4px;
+    }
+
+    .footer{
+      margin-top:26px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .back{
+      text-decoration:none;
+      color:#fff; background:#3949ab; border-radius:10px; padding:10px 14px; font-weight:700;
+    }
+
+    /* completion tick */
+    .tick{
+      display:inline-flex; align-items:center; gap:6px; font-weight:700; color:var(--ok);
+    }
+
+    /* small confetti animation when 100% */
+    @keyframes pop {
+      0% { transform: scale(.9); opacity:.2 }
+      100% { transform: scale(1); opacity:1 }
+    }
+    .celebrate{ animation: pop .5s ease; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Hero / header -->
+    <section class="hero">
+      <div>
+        <span class="pill">📦 Stock Staff • Training Hub</span>
+        <h2>Level up your warehouse security skills</h2>
+        <p class="sub">Clear modules, quick wins, real impact. Earn badges as you complete trainings.</p>
+      </div>
+      <div class="meta">
+        <p><strong>User:</strong> <span id="uName">—</span></p>
+        <p><strong>Job ID:</strong> <span id="uJob">—</span></p>
+        <p><strong>Role:</strong> <span id="uRole">Stock Staff</span></p>
+        <div class="bar" title="Your completion progress">
+          <span id="progressFill" style="width:0%"></span>
+        </div>
+        <p class="muted"><span id="progressText">0%</span> complete</p>
+      </div>
+    </section>
+
+    <!-- Training cards -->
+    <section class="grid" id="cards">
+      <!-- Module 1 -->
+      <article class="card" data-topic="Secure Use of Inventory Devices">
+        <div class="row">
+          <h3>🔐 Secure Use of Inventory Devices</h3>
+          <span class="badge">+75 XP</span>
+        </div>
+        <p>Learn to operate scanners, tablets, and desktops securely—locking, logging out, and avoiding risky apps.</p>
+        <ul>
+          <li>Proper logout & device lock</li>
+          <li>Safe Wi‑Fi usage on shared devices</li>
+          <li>Approved apps only</li>
+          <li>Reporting suspicious device activity</li>
+        </ul>
+        <div class="row">
+          <span class="chip">⏱️ 6–8 min</span>
+          <span class="chip">🏷️ Beginner</span>
+          <span class="chip ok" id="m1Status">Not completed</span>
+        </div>
+        <div class="actions">
+          <!-- Link to your existing stock staff training page (adjust if your filename differs) -->
+          <a id="m1Start" class="button">🚀 Start Module</a>
+          <!-- Link directly to the quiz if you want a shortcut -->
+          <a id="m1Quiz" class="button ghost">🧩 Take Quiz</a>
+        </div>
+        <p class="muted">Badge: “Device Defender” • Complete module + quiz to unlock</p>
+      </article>
+
+      <!-- Module 2 -->
+      <article class="card" data-topic="Incident Reporting for Warehouse Staff">
+        <div class="row">
+          <h3>🚨 Incident Reporting for Warehouse Staff</h3>
+          <span class="badge">+75 XP</span>
+        </div>
+        <p>Recognize suspicious activity early and report it fast. Learn simple steps that contain threats before they spread.</p>
+        <ul>
+          <li>What counts as a reportable event</li>
+          <li>Documenting the “what/when/who”</li>
+          <li>When to isolate a device</li>
+          <li>Who to notify and how</li>
+        </ul>
+        <div class="row">
+          <span class="chip">⏱️ 6–8 min</span>
+          <span class="chip">🏷️ Beginner</span>
+          <span class="chip ok" id="m2Status">Not completed</span>
+        </div>
+        <div class="actions">
+          <!-- Update this link to your incident training page if you use a different filename -->
+          <a id="m2Start" class="button">🚀 Start Module</a>
+          <a id="m2Quiz" class="button ghost">🧩 Take Quiz</a>
+        </div>
+        <p class="muted">Badge: “Rapid Responder” • Complete module + quiz to unlock</p>
+      </article>
+    </section>
+
+    <!-- Footer actions -->
+    <div class="footer">
+      <a id="backDash" class="back">⬅️ Back to Stock Staff Dashboard</a>
+      <span id="celebrate" class="tick" style="display:none;">🎉 All modules completed — great job!</span>
+    </div>
+  </div>
+
+  <script>
+    // ===== URL params → identity + role-safe routing =====
+    const params = new URLSearchParams(location.search);
+    const username = params.get("username") || params.get("name") || "";
+    const jobid    = params.get("jobid")    || params.get("user_id") || "";
+    const role     = (params.get("role") || "Stock Staff").trim();
+
+    // Fill header
+    document.getElementById("uName").textContent = username || "—";
+    document.getElementById("uJob").textContent  = jobid || "—";
+    document.getElementById("uRole").textContent = role;
+
+    // Build back-to-dashboard URL based on role folder
+    const rolePath = role.toLowerCase().replace(/\s+/g, "-"); // "Stock Staff" -> "stock-staff"
+    const dashHref = `../${rolePath}/training_dashboard.html?` + new URLSearchParams({ username, jobid, role }).toString();
+    document.getElementById("backDash").href = dashHref;
+ 
+    // ===== Known module routes (adjust only if your filenames differ) =====
+    // Module 1: Secure Use of Inventory Devices
+    const m1Training = "stock-staff-cybersecurity-training.html";       // existing training page for stock staff devices
+    const m1Quiz     = "quiz-stock-staff-cybersecurity.html";  // existing quiz file
+
+    // Module 2: Incident Reporting (warehouse)
+    const m2Training = "stock-staff-incident-reporting-training.html";    // create/point to your incident training file
+    const m2Quiz     = "quiz-stock-staff-incidentewporting.html";// create/point to your incident quiz file
+
+    // Append identity params to links
+    function withParams(path, extra={}) {
+      const q = new URLSearchParams({ username, jobid, role, ...extra });
+      return `${path}?${q.toString()}`;
+    }
+    document.getElementById("m1Start").href = withParams(m1Training, { topic: "Secure Use of Inventory Devices" });
+    document.getElementById("m1Quiz").href  = withParams(m1Quiz,     { topic: "Secure Use of Inventory Devices" });
+
+    document.getElementById("m2Start").href = withParams(m2Training, { topic: "Incident Reporting for Warehouse Staff" });
+    document.getElementById("m2Quiz").href  = withParams(m2Quiz,     { topic: "Incident Reporting for Warehouse Staff" });
+
+    // ===== Progress from saved results (central results.html stores entries in localStorage.quizResults) =====
+    const results = JSON.parse(localStorage.getItem("quizResults") || "[]");
+
+    // Which topics mark completion for each module:
+    const m1Topics = new Set(["Secure Use of Inventory Devices", "Cybersecurity Awareness", "Stock Staff Cybersecurity"]);
+    const m2Topics = new Set(["Incident Reporting for Warehouse Staff", "Incident Response Basics (Warehouse)"]);
+
+    function isCompleted(topicsSet) {
+      // A result is considered "owned" by this user if username & jobid match (when available).
+      return results.some(r => {
+        const userMatch = (!username && !jobid) || (r.username === username && r.jobid === jobid);
+        return userMatch && topicsSet.has(r.topic) && String(r.score || "").includes("/"); // any score saved
+      });
+    }
+
+    const m1Done = isCompleted(m1Topics);
+    const m2Done = isCompleted(m2Topics);
+
+    // Update UI chips
+    document.getElementById("m1Status").textContent = m1Done ? "✓ Completed" : "Not completed";
+    document.getElementById("m1Status").classList.toggle("ok", m1Done);
+    document.getElementById("m1Status").classList.toggle("warn", !m1Done);
+
+    document.getElementById("m2Status").textContent = m2Done ? "✓ Completed" : "Not completed";
+    document.getElementById("m2Status").classList.toggle("ok", m2Done);
+    document.getElementById("m2Status").classList.toggle("warn", !m2Done);
+
+    // Progress bar
+    const total = 2;
+    const completed = [m1Done, m2Done].filter(Boolean).length;
+    const pct = Math.round((completed / total) * 100);
+    document.getElementById("progressFill").style.width = pct + "%";
+    document.getElementById("progressText").textContent = pct + "%";
+
+    if (pct === 100) {
+      const c = document.getElementById("celebrate");
+      c.style.display = "inline-flex";
+      c.classList.add("celebrate");
+    }
+
+    // Optional: mark “completedTrainingsStockStaff” set for consistency with other pages
+    const completedListKey = "completedTrainingsStockStaff";
+    const completedList = new Set(JSON.parse(localStorage.getItem(completedListKey) || "[]"));
+    if (m1Done) completedList.add("Secure Use of Inventory Devices");
+    if (m2Done) completedList.add("Incident Reporting for Warehouse Staff");
+    localStorage.setItem(completedListKey, JSON.stringify([...completedList]));
+  </script>
+</body>
+</html>
+

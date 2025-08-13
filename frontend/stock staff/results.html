@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Quiz Results</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style_updated_v2.css" />
+  <script src="../config.js"></script>
+  <style>
+    :root{
+      --ok:#22c55e; --warn:#f59e0b; --brand:#4f46e5; --bg1:#eef2ff; --bg2:#fff7ed;
+    }
+    body{
+      font-family: Inter, system-ui, Arial, sans-serif;
+      min-height:100dvh; display:grid; place-items:center;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      padding:24px; margin:0;
+    }
+    .card{
+      width:min(800px, 94vw); background:#fff; border-radius:18px;
+      box-shadow:0 12px 40px rgba(0,0,0,.08);
+      padding:28px; animation:pop .5s ease both;
+    }
+    .title{font-size:28px; margin:0 0 8px; color:var(--brand); text-align:center}
+    .sub{margin:0 0 18px; text-align:center; color:#475569}
+    .meta{
+      display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      margin:18px 0 6px;
+    }
+    .pill{
+      background:#f8fafc; border:1px dashed #e2e8f0; border-radius:12px;
+      padding:12px 14px; font-size:14px; color:#334155; display:flex; gap:8px; align-items:center;
+    }
+    .scoreBox{
+      margin:16px 0 10px; text-align:center;
+      background:#ecfdf5; border:1px solid #bbf7d0; color:#065f46;
+      border-radius:14px; padding:14px 16px; font-weight:600; font-size:18px;
+    }
+    .badgeRow{display:flex; gap:10px; justify-content:center; margin:8px 0 2px; flex-wrap:wrap}
+    .badge{
+      padding:8px 12px; border-radius:999px; font-size:12px; font-weight:700;
+      background:#f1f5f9; color:#0f172a; border:1px solid #e2e8f0;
+    }
+    .leaderboard{
+      margin-top:14px; border-top:1px solid #e5e7eb; padding-top:14px;
+    }
+    .leaderboard h3{margin:0 0 10px; color:#0f172a}
+    .lb{
+      list-style:none; padding:0; margin:0; display:grid; gap:8px;
+    }
+    .lb li{
+      display:grid; grid-template-columns: 36px 1fr auto;
+      gap:10px; align-items:center; background:#fafafa; border:1px solid #eee;
+      border-radius:12px; padding:10px 12px;
+    }
+    .rank{width:36px; height:36px; display:grid; place-items:center; border-radius:10px; background:#eef2ff; color:#3730a3; font-weight:800}
+    .name{font-weight:600; color:#0f172a}
+    .pts{font-variant-numeric: tabular-nums; color:#475569}
+    .btnRow{display:flex; gap:10px; justify-content:center; margin-top:18px}
+    .btn{
+      appearance:none; border:0; background:var(--brand); color:#fff; font-weight:700;
+      padding:12px 16px; border-radius:12px; cursor:pointer; transition:transform .06s ease;
+    }
+    .btn.secondary{background:#0ea5e9}
+    .btn:active{transform:translateY(1px)}
+    .note{font-size:12px; color:#64748b; text-align:center; margin-top:8px}
+    @keyframes pop{from{transform:translateY(8px); opacity:0} to{transform:none; opacity:1}}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1 class="title">🎉 Quiz Results</h1>
+    <p class="sub">Great effort! Your progress and points are saved.</p>
+
+    <section class="meta">
+      <div class="pill">🧩 <strong>Topic:</strong>&nbsp;<span id="topic">—</span></div>
+      <div class="pill">🧑‍💼 <strong>Role:</strong>&nbsp;<span id="role">—</span></div>
+      <div class="pill">📈 <strong>Score:</strong>&nbsp;<span id="score">0</span>/5</div>
+      <div class="pill">⭐ <strong>Points:</strong>&nbsp;<span id="points">0</span></div>
+    </section>
+
+    <div id="badgeWrap" class="badgeRow"></div>
+    <div class="scoreBox" id="feedback">Calculating feedback…</div>
+
+    <section class="leaderboard">
+      <h3>🏆 Leaderboard (this module)</h3>
+      <ul id="lb" class="lb">
+        <li><span class="rank">—</span><span class="name">Loading…</span><span class="pts">…</span></li>
+      </ul>
+      <p class="note">Sorted by best score, then most recent.</p>
+    </section>
+
+    <div class="btnRow">
+      <button class="btn" id="backBtn">⬅️ Back to Dashboard</button>
+      <button class="btn secondary" id="retryBtn">🔁 Retake Quiz</button>
+    </div>
+  </main>
+
+  <script>
+    // ===== CONFIG (from config.js) =====
+    // Expecting: window.SHEETDB_URL, optional: window.POINTS, window.SOURCE_TAG
+    const SHEETDB_URL = window.SHEETDB_URL || "https://script.google.com/macros/s/AKfycbwbuwRUBjzzHQbPacreG4DavaQ-750NB0Suwl0QGRzCNFn0IaRdaMrkHVpn4c6_45s/exec";
+    const SOURCE_TAG   = window.SOURCE_TAG || "frontend";
+
+    // ===== Helpers =====
+    const qs = new URLSearchParams(location.search);
+    const safe = (s) => (s ?? "").toString().trim();
+
+    const userId = safe(qs.get("user_id") || qs.get("jobid") || localStorage.getItem("user_id"));
+    const username = safe(qs.get("username") || localStorage.getItem("username"));
+    const role = safe(qs.get("role") || localStorage.getItem("role"));
+    const topic = safe(qs.get("topic") || qs.get("module"));
+    const score = Number(qs.get("score") || 0);
+
+    document.getElementById("role").textContent = role || "—";
+    document.getElementById("topic").textContent = topic || "—";
+    document.getElementById("score").textContent = isNaN(score) ? 0 : score;
+
+    // Points model (align with dashboards)
+    const POINTS = (window.POINTS) ? window.POINTS : { base: 10, perScore: 1 };
+    const points = POINTS.base + (POINTS.perScore * score);
+    document.getElementById("points").textContent = points;
+
+    // Feedback + Badges
+    const feedbackEl = document.getElementById("feedback");
+    const badgesEl = document.getElementById("badgeWrap");
+    const stars = "★".repeat(score) + "☆".repeat(Math.max(0, 5 - score));
+
+    function addBadge(text){
+      const b = document.createElement("span");
+      b.className = "badge";
+      b.textContent = text;
+      badgesEl.appendChild(b);
+    }
+
+    if (score === 5){
+      feedbackEl.textContent = `Perfect! ${stars} — Outstanding mastery.`;
+      addBadge("🏅 Perfect 5/5");
+      addBadge("⚡ Speed Runner");
+    } else if (score >= 4){
+      feedbackEl.textContent = `Great job! ${stars} — Almost there, keep it up.`;
+      addBadge("🥇 High Performer");
+    } else if (score === 3){
+      feedbackEl.textContent = `Good attempt! ${stars} — Review a few items to boost your score.`;
+      addBadge("🥈 On The Board");
+    } else {
+      feedbackEl.textContent = `Keep going! ${stars} — Try a quick refresher and retake.`;
+      addBadge("📚 Needs Review");
+    }
+
+    // Persist module completion per role
+    const LOCAL_KEY = `completedTrainings${role || ""}`;
+    try{
+      const arr = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
+      if (topic && !arr.includes(topic)){
+        arr.push(topic);
+        localStorage.setItem(LOCAL_KEY, JSON.stringify(arr));
+      }
+      // Update aggregate points
+      const pk = `points_${role || "all"}`;
+      const cur = Number(localStorage.getItem(pk) || 0);
+      localStorage.setItem(pk, String(cur + points));
+    }catch(e){ console.warn("localStorage error:", e); }
+
+    // Write completion to SheetDB (training_log)
+    async function writeCompletion(){
+      try{
+        const payload = {
+          data: [{
+            user_id: userId || "",
+            username: username || "",
+            role: role || "",
+            training: topic || "",
+            training_title: topic || "",
+            completed: "Yes",
+            score: String(score),
+            submitted_at: new Date().toISOString(),
+            source: SOURCE_TAG
+          }]
+        };
+        // If your API uses a specific sheet, add: ?sheet=training_log
+        const res = await fetch(`${SHEETDB_URL}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error(`SheetDB POST failed: ${res.status}`);
+      }catch(err){
+        console.warn("SheetDB write failed (non-blocking):", err);
+      }
+    }
+
+    // Load leaderboard from SheetDB, then sort client-side
+    async function loadLeaderboard(){
+      const lbEl = document.getElementById("lb");
+      lbEl.innerHTML = `<li><span class="rank">…</span><span class="name">Fetching leaderboard…</span><span class="pts">—</span></li>`;
+      try{
+        // Pull rows for THIS role & module; if your API supports sheet switching, append ?sheet=training_log
+        const url = `${SHEETDB_URL}/search?role=${encodeURIComponent(role)}&training=${encodeURIComponent(topic)}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`SheetDB GET failed: ${res.status}`);
+        const rows = await res.json();
+
+        const norm = (Array.isArray(rows) ? rows : []).map(r => ({
+          username: r.username || "User",
+          score: Number(r.score || 0),
+          submitted_at: r.submitted_at || "1970-01-01T00:00:00Z"
+        }));
+
+        norm.sort((a,b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return new Date(b.submitted_at) - new Date(a.submitted_at);
+        });
+
+        const top = norm.slice(0,5);
+        if (!top.length){
+          lbEl.innerHTML = `<li><span class="rank">—</span><span class="name">No attempts yet</span><span class="pts">0/5</span></li>`;
+          return;
+        }
+
+        lbEl.innerHTML = "";
+        top.forEach((r, i) => {
+          const li = document.createElement("li");
+          const rank = document.createElement("span");
+          rank.className = "rank";
+          rank.textContent = i+1;
+
+          const name = document.createElement("span");
+          name.className = "name";
+          name.textContent = r.username;
+
+          const pts = document.createElement("span");
+          pts.className = "pts";
+          pts.textContent = `${r.score}/5 ${"★".repeat(r.score)}${"☆".repeat(5-r.score)}`;
+
+          li.append(rank, name, pts);
+          lbEl.appendChild(li);
+        });
+      }catch(err){
+        console.warn(err);
+        lbEl.innerHTML = `<li><span class="rank">!</span><span class="name">Couldn’t load leaderboard</span><span class="pts">—</span></li>`;
+      }
+    }
+
+    // Route back to correct dashboard
+    const DASH = {
+      "Cashier": "../dashboard_cashier.html",
+      "Supervisor": "../dashboard_supervisor.html",
+      "Stock": "../dashboard_stock.html",
+      "Management": "../dashboard_management.html"
+    };
+    function goBack(){
+      const file = DASH[role] || "../index.html";
+      const qp = new URLSearchParams({
+        name: username || "",
+        role: role || ""
+      });
+      location.href = `${file}?${qp.toString()}`;
+    }
+    function retry(){
+      // Assume quiz.html uses ?module=
+      const qp = new URLSearchParams({ role, username, user_id: userId, module: topic });
+      const back = document.referrer && /quiz\.html/i.test(document.referrer) ? document.referrer.split("?")[0] : "./quiz.html";
+      location.href = `${back}?${qp.toString()}`;
+    }
+
+    document.getElementById("backBtn").addEventListener("click", goBack);
+    document.getElementById("retryBtn").addEventListener("click", retry);
+
+    // Fire-and-forget write, then load leaderboard
+    writeCompletion().finally(loadLeaderboard);
+  </script>
+</body>
+</html>
+

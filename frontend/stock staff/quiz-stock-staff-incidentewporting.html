@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📋 Incident Reporting Quiz for Stock Staff</title>
+  <link rel="stylesheet" href="../style_updated_v2.css" />
+  <style>
+    :root{
+      --brand:#4a148c;
+      --brand-2:#7e57c2;
+      --ok:#2e7d32;
+      --warn:#ef6c00;
+      --bg1:#ede7f6;
+      --card:#ffffff;
+    }
+    body{
+      font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;
+      margin:0;
+      background:linear-gradient(135deg,#e8eaf6,#e3f2fd 40%,#e8f5e9);
+      color:#222;
+    }
+    .box{
+      max-width:900px;
+      margin:48px auto;
+      background:var(--card);
+      padding:32px;
+      border-radius:20px;
+      box-shadow:0 12px 28px rgba(0,0,0,.12);
+    }
+    h2{
+      margin:0 0 6px;
+      text-align:center;
+      color:var(--brand);
+    }
+    .subtitle{
+      text-align:center;
+      color:#5e35b1;
+      margin:0 0 18px;
+      font-weight:600;
+    }
+    /* Progress */
+    .progress-wrap{
+      margin:18px auto 26px;
+      max-width:520px;
+      text-align:center;
+    }
+    .progress-label{
+      font-weight:600;
+      margin-bottom:6px;
+      color:#5e35b1;
+    }
+    .progress{
+      width:100%;
+      height:12px;
+      background:#f1f3f4;
+      border-radius:999px;
+      overflow:hidden;
+      box-shadow:inset 0 1px 2px rgba(0,0,0,.08);
+    }
+    .progress > span{
+      display:block;
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--brand),var(--brand-2));
+      transition:width .3s ease;
+    }
+    .pill{
+      display:inline-block;
+      background:#ede7f6;
+      color:#4a148c;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:13px;
+      margin-top:8px;
+    }
+
+    /* Question card */
+    .question-block{
+      background:#fafafa;
+      border:1px solid #eee;
+      padding:20px 18px;
+      border-radius:14px;
+      margin:16px 0;
+      box-shadow:0 6px 14px rgba(0,0,0,.06);
+      transition:transform .15s ease, box-shadow .15s ease;
+    }
+    .question-block:hover{ transform:translateY(-1px); box-shadow:0 10px 20px rgba(0,0,0,.08); }
+    .question-block h3{
+      margin:0 0 10px;
+      color:#1a237e;
+      font-size:18px;
+    }
+    label{
+      display:block;
+      padding:10px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      transition:background .15s ease, box-shadow .15s ease;
+    }
+    label:hover{
+      background:#f3e5f5;
+      box-shadow:inset 0 0 0 1px #e1bee7;
+    }
+    input[type="radio"]{ margin-right:10px; }
+
+    /* Actions centered */
+    .actions{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-top:24px;
+      gap:10px;
+    }
+    .button{
+      padding:12px 24px;
+      font-size:17px;
+      background:var(--brand);
+      color:#fff;
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+      transition:transform .15s ease, background .2s ease, box-shadow .15s ease;
+      box-shadow:0 8px 18px rgba(74,20,140,.24);
+    }
+    .button:hover{ background:#311b92; transform:translateY(-1px); }
+    .button:disabled{
+      background:#bdbdbd !important;
+      box-shadow:none;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    /* Result toast */
+    .result-box{
+      display:none;
+      background:var(--bg1);
+      color:#4a148c;
+      padding:16px 18px;
+      margin:22px auto 0;
+      max-width:600px;
+      border-radius:12px;
+      text-align:center;
+      font-weight:600;
+    }
+    .stars{ font-size:22px; letter-spacing:1px; }
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#ffd54f;
+      color:#4e342e;
+      margin-left:8px;
+      font-size:13px;
+      font-weight:700;
+    }
+    .hint{ font-size:13px; opacity:.85; margin-top:6px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>📋 Incident Reporting Quiz for Stock Staff</h2>
+    <p class="subtitle">Answer all 5 questions • Earn stars and unlock your badge!</p>
+
+    <div class="progress-wrap">
+      <div class="progress-label">Progress</div>
+      <div class="progress"><span id="progressBar"></span></div>
+      <div class="pill"><span id="answeredCount">0</span>/5 answered</div>
+    </div>
+
+    <form id="quizForm" novalidate>
+      <!-- Hidden passthrough from URL -->
+      <input type="hidden" name="topic" value="Incident Reporting" />
+      <input type="hidden" name="username" value="" />
+      <input type="hidden" name="jobid" value="" />
+      <input type="hidden" name="role" value="Stock Staff" />
+
+      <div class="question-block">
+        <h3>1) What should you do if a device goes missing?</h3>
+        <label><input type="radio" name="q1" value="Report to supervisor" />Report to supervisor</label>
+        <label><input type="radio" name="q1" value="Ignore it" />Ignore it</label>
+        <label><input type="radio" name="q1" value="Wait until the next day" />Wait until the next day</label>
+      </div>
+
+      <div class="question-block">
+        <h3>2) Which of the following is considered an incident?</h3>
+        <label><input type="radio" name="q2" value="App update" />App update</label>
+        <label><input type="radio" name="q2" value="Unauthorized access attempt" />Unauthorized access attempt</label>
+        <label><input type="radio" name="q2" value="Scheduled reboot" />Scheduled reboot</label>
+      </div>
+
+      <div class="question-block">
+        <h3>3) What should you include in an incident report?</h3>
+        <label><input type="radio" name="q3" value="Details and facts" />Details and facts</label>
+        <label><input type="radio" name="q3" value="Guesswork and opinions" />Guesswork and opinions</label>
+        <label><input type="radio" name="q3" value="Nothing" />Nothing</label>
+      </div>
+
+      <div class="question-block">
+        <h3>4) When should you report a suspicious email?</h3>
+        <label><input type="radio" name="q4" value="Immediately" />Immediately</label>
+        <label><input type="radio" name="q4" value="Next week" />Next week</label>
+        <label><input type="radio" name="q4" value="When you feel like it" />When you feel like it</label>
+      </div>
+
+      <div class="question-block">
+        <h3>5) Who should receive your incident report?</h3>
+        <label><input type="radio" name="q5" value="Supervisor or IT team" />Supervisor or IT team</label>
+        <label><input type="radio" name="q5" value="Customer" />Customer</label>
+        <label><input type="radio" name="q5" value="Anyone nearby" />Anyone nearby</label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" id="submitBtn" class="button" disabled>🚀 Submit Answers</button>
+      </div>
+    </form>
+
+    <div id="result" class="result-box"></div>
+  </div>
+
+  <!-- Tiny confetti for perfect score -->
+  <script>
+    // Lightweight confetti
+    function confettiBurst(x=window.innerWidth/2, y=120){
+      const colors=['#7e57c2','#42a5f5','#ab47bc','#66bb6a','#ffca28'];
+      for(let i=0;i<60;i++){
+        const d=document.createElement('div');
+        d.style.position='fixed';
+        d.style.left=(x+ (Math.random()*240-120))+'px';
+        d.style.top=(y+ (Math.random()*80-40))+'px';
+        d.style.width=d.style.height=(Math.random()*6+4)+'px';
+        d.style.background=colors[Math.floor(Math.random()*colors.length)];
+        d.style.opacity='0.9';
+        d.style.borderRadius='2px';
+        d.style.transform=`rotate(${Math.random()*360}deg)`;
+        d.style.pointerEvents='none';
+        d.style.transition='all 800ms ease-out';
+        document.body.appendChild(d);
+        requestAnimationFrame(()=>{
+          d.style.transform+=` translate(${(Math.random()*2-1)*120}px, ${180+Math.random()*120}px) rotate(${Math.random()*360}deg)`;
+          d.style.opacity='0';
+        });
+        setTimeout(()=>d.remove(),900);
+      }
+    }
+  </script>
+
+  <script>
+    // --- Pull URL params into hidden inputs (username, jobid, role if provided) ---
+    const params = new URLSearchParams(window.location.search);
+    document.querySelector('input[name="username"]').value = params.get('username') || '';
+    document.querySelector('input[name="jobid"]').value    = params.get('jobid') || '';
+    const incomingRole = params.get('role');
+    if (incomingRole) document.querySelector('input[name="role"]').value = incomingRole;
+
+    // --- Progress + enable submit when all answered ---
+    const REQUIRED = 5;
+    const groups = ['q1','q2','q3','q4','q5'];
+    const progressBar = document.getElementById('progressBar');
+    const answeredCount = document.getElementById('answeredCount');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function updateProgress(){
+      let answered = 0;
+      for (const g of groups){
+        const checked = document.querySelector(`input[name="${g}"]:checked`);
+        if (checked) answered++;
+      }
+      answeredCount.textContent = answered;
+      progressBar.style.width = (answered/REQUIRED*100) + '%';
+      submitBtn.disabled = answered !== REQUIRED;
+    }
+
+    document.querySelectorAll('input[type="radio"]').forEach(r=>{
+      r.addEventListener('change', updateProgress);
+    });
+
+    // --- Scoring + UX + redirect to centralized results.html ---
+    document.getElementById("quizForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const form = e.target;
+      let score=0;
+
+      if(form.q1.value === "Report to supervisor") score++;
+      if(form.q2.value === "Unauthorized access attempt") score++;
+      if(form.q3.value === "Details and facts") score++;
+      if(form.q4.value === "Immediately") score++;
+      if(form.q5.value === "Supervisor or IT team") score++;
+
+      const resultBox = document.getElementById("result");
+      resultBox.style.display = "block";
+
+      let stars = '⭐'.repeat(score) + '☆'.repeat(5-score);
+      let badge = score===5 ? 'Gold' : score>=3 ? 'Silver' : 'Bronze';
+      let msg;
+      if(score===5){
+        msg = `🎉 Perfect! You scored <strong>5/5</strong>. <span class="stars">${stars}</span> <span class="badge">${badge}</span>`;
+        confettiBurst();
+      }else if(score>=3){
+        msg = `✅ Nice work! You scored <strong>${score}/5</strong>. <span class="stars">${stars}</span> <span class="badge">${badge}</span><div class="hint">Tip: Report fast, document facts, and notify IT.</div>`;
+      }else{
+        msg = `⚠️ You scored <strong>${score}/5</strong>. <span class="stars">${stars}</span> <span class="badge">${badge}</span><div class="hint">Review the reporting steps and try again.</div>`;
+      }
+      resultBox.innerHTML = msg;
+
+      // Persist to localStorage (multi-result history)
+      const username = form.username.value || 'Unknown';
+      const jobid = form.jobid.value || 'N/A';
+      const role = form.role.value || 'Stock Staff';
+      const topic = form.topic.value || 'Incident Reporting';
+      const today = new Date().toISOString().split('T')[0];
+
+      const newResult = { username, jobid, topic, role, score:`${score}/5`, date: today };
+      const results = JSON.parse(localStorage.getItem("quizResults") || "[]");
+      results.push(newResult);
+      localStorage.setItem("quizResults", JSON.stringify(results));
+
+      // Mark topic complete for dashboard ticks
+      const completedKey = "completedTrainings";
+      const completed = JSON.parse(localStorage.getItem(completedKey) || "[]");
+      if (!completed.includes(topic)){
+        completed.push(topic);
+        localStorage.setItem(completedKey, JSON.stringify(completed));
+      }
+
+      // Redirect to centralized results page with full query string
+      const q = new URLSearchParams({
+        username, jobid, role, topic, score: String(score)
+      });
+      // results.html is at the role root level (../) per your project flow
+      setTimeout(()=>{ window.location.href = `../results.html?${q.toString()}`; }, 900);
+    });
+
+    // Initialize progress on load (in case some answers are prefilled by browser)
+    updateProgress();
+  </script>
+</body>
+</html>
+

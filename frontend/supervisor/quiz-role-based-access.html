@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🔐 Role‑Based Access Quiz — Supervisors</title>
+  <link rel="stylesheet" href="../style_updated_v2.css" />
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #0b0f19; color: #e6eaf2; margin: 0; }
+    .wrap { max-width: 900px; margin: 40px auto; padding: 0 16px; }
+    .box  { background: #121829; border: 1px solid #1e293b; border-radius: 16px; padding: 28px; }
+    h1 { margin: 0 0 6px; font-weight: 800; }
+    .muted { color:#a7b0c0; }
+    .pillbar { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px }
+    .pill { background:#1f2a44; color:#a7b0c0; border:1px solid #29334d; padding:6px 10px; border-radius:999px; font-size:12px }
+    .q { background:#0f1526; border:1px solid #1e293b; border-radius:12px; padding:16px; margin:14px 0 }
+    .q h3 { margin:0 0 8px; }
+    label { display:block; margin:6px 0; cursor:pointer; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px }
+    .btn  { background:#3b82f6; color:#fff; border:none; padding:12px 18px; border-radius:12px; cursor:pointer; }
+    .btn:hover { filter:brightness(1.08) }
+    .ghost{ background:#1f2a44; color:#cfe3ff; border:1px solid #28406b; padding:12px 18px; border-radius:12px; cursor:pointer; }
+    .result { display:none; background:#0f2a2d; border:1px solid #1f4f55; color:#c7f5ff; padding:14px; border-radius:10px; margin-top:16px }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="box">
+      <h1>🔐 Role‑Based Access Quiz</h1>
+      <div class="muted" id="meta">User: – • Job ID: – • Role: Supervisor</div>
+      <div class="pillbar">
+        <span class="pill">🧭 Topic: Role‑Based Access Control</span>
+        <span class="pill">🧩 5 questions</span>
+        <span class="pill">🏅 Score shown on results page</span>
+      </div>
+
+      <form id="quizForm" style="margin-top:18px">
+        <div class="q">
+          <h3>1) What is the principle of least privilege?</h3>
+          <label><input type="radio" name="q1" value="all"> Give access to all files</label>
+          <label><input type="radio" name="q1" value="min" required> Give minimum necessary access</label>
+          <label><input type="radio" name="q1" value="admin"> Grant admin rights to all</label>
+        </div>
+
+        <div class="q">
+          <h3>2) What should you do when an employee changes roles?</h3>
+          <label><input type="radio" name="q2" value="keep"> Keep their old access</label>
+          <label><input type="radio" name="q2" value="update" required> Immediately update access</label>
+          <label><input type="radio" name="q2" value="ignore"> Ignore access change</label>
+        </div>
+
+        <div class="q">
+          <h3>3) Who should determine access rights?</h3>
+          <label><input type="radio" name="q3" value="hr"> HR alone</label>
+          <label><input type="radio" name="q3" value="sit" required> Supervisor with IT</label>
+          <label><input type="radio" name="q3" value="any"> Anyone in the department</label>
+        </div>
+
+        <div class="q">
+          <h3>4) Why is it risky to let interns use admin accounts?</h3>
+          <label><input type="radio" name="q4" value="paid"> They are not paid</label>
+          <label><input type="radio" name="q4" value="acc" required> They may make accidental changes</label>
+          <label><input type="radio" name="q4" value="care"> Interns are always careful</label>
+        </div>
+
+        <div class="q">
+          <h3>5) When should access reviews be conducted?</h3>
+          <label><input type="radio" name="q5" value="hire"> Only during hiring</label>
+          <label><input type="radio" name="q5" value="never"> Never</label>
+          <label><input type="radio" name="q5" value="reg" required> Regularly with IT</label>
+        </div>
+
+        <div class="row">
+          <button type="submit" class="btn">🚀 Submit Answers</button>
+          <button type="button" id="backBtn" class="ghost">⬅️ Back to Dashboard</button>
+        </div>
+      </form>
+
+      <div id="inlineResult" class="result"></div>
+    </div>
+  </div>
+
+  <script>
+    // --- identity & page wiring ---
+    const p = new URLSearchParams(location.search);
+    const name    = p.get('name') || p.get('username') || 'User';
+    const jobid   = p.get('jobid') || p.get('user_id') || '';
+    const role    = p.get('role') || 'Supervisor';
+    const topic   = 'Role-Based Access Control';
+
+    // show identity
+    document.getElementById('meta').textContent =
+      `User: ${name} • Job ID: ${jobid || '—'} • Role: ${role}`;
+
+    // back to dashboard for this role (folder = supervisor)
+    document.getElementById('backBtn').onclick = () => {
+      const qs = new URLSearchParams({ name, username: name, jobid, user_id: jobid, role });
+      location.href = `training_dashboard.html?${qs.toString()}`;
+    };
+
+    // helper: try to open results.html in this folder; show inline if missing
+    async function goToResults(score) {
+      const qs = new URLSearchParams({
+        username: name,
+        jobid,
+        role,
+        topic,
+        score: String(score),
+        back: 'training_dashboard.html'
+      });
+
+      try {
+        const res = await fetch('results.html', { method: 'GET' });
+        if (res.ok) {
+          location.href = `results.html?${qs.toString()}`;
+          return;
+        }
+      } catch (_) {}
+
+      // fallback: show inline score (so the user still sees their result)
+      const box = document.getElementById('inlineResult');
+      box.innerHTML = `✅ ${name}, you scored <strong>${score}/5</strong> on “${topic}”.`;
+      box.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // tiny local progress stamp for dashboards
+    function saveProgress(score) {
+      const key = `userProgress_${(role||'supervisor').toLowerCase()}`;
+      const list = JSON.parse(localStorage.getItem(key) || '[]');
+      list.push({ username: name, jobid, role, topic, score, date: new Date().toISOString() });
+      localStorage.setItem(key, JSON.stringify(list));
+    }
+
+    // quiz submit
+    document.getElementById('quizForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      let s = 0;
+      if (f.q1.value === 'min')  s++;
+      if (f.q2.value === 'update') s++;
+      if (f.q3.value === 'sit')  s++;
+      if (f.q4.value === 'acc')  s++;
+      if (f.q5.value === 'reg')  s++;
+
+      saveProgress(s);
+      goToResults(s);
+      f.querySelector('.btn').disabled = true;
+    });
+  </script>
+</body>
+</html>
+
+

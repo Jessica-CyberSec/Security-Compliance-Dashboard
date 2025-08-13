@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📋 Compliance Quiz for Management</title>
+  <link rel="stylesheet" href="../style_updated_v2.css">
+  <style>
+    .question-block {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 700px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    .question-block:hover {
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    }
+    .question-block h3 {
+      color: #00796b;
+    }
+    .quiz-progress {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 18px;
+    }
+    .result-box {
+      background: #e0f7fa;
+      color: #00796b;
+      font-weight: bold;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 600px;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>📋 Compliance Quiz for Management</h2>
+    <p>Test your knowledge of data protection and compliance responsibilities.</p>
+    <form id="quizForm">
+      <input type="hidden" name="topic" value="Compliance Training">
+      <input type="hidden" name="username" value="">
+      <input type="hidden" name="jobid" value="">
+      <input type="hidden" name="role" value="Manager">
+
+      <div class="quiz-progress">🧠 Total Questions: 5</div>
+
+      <div class='question-block'><h3>🎯 Question 1</h3>
+        <p><b>What is the main purpose of data protection laws like GDPR?</b></p>
+        <label><input type='radio' name='q1' value='To punish companies' required> To punish companies</label><br>
+        <label><input type='radio' name='q1' value='To protect individual privacy and data' required> To protect individual privacy and data</label><br>
+        <label><input type='radio' name='q1' value='To limit marketing' required> To limit marketing</label>
+      </div>
+
+      <div class='question-block'><h3>🎯 Question 2</h3>
+        <p><b>Which of the following is considered sensitive personal data?</b></p>
+        <label><input type='radio' name='q2' value='Email subscription preference' required> Email subscription preference</label><br>
+        <label><input type='radio' name='q2' value='Home address' required> Home address</label><br>
+        <label><input type='radio' name='q2' value='Medical history' required> Medical history</label>
+      </div>
+
+      <div class='question-block'><h3>🎯 Question 3</h3>
+        <p><b>When should a data breach be reported under GDPR?</b></p>
+        <label><input type='radio' name='q3' value='Within 72 hours' required> Within 72 hours</label><br>
+        <label><input type='radio' name='q3' value='Within 30 days' required> Within 30 days</label><br>
+        <label><input type='radio' name='q3' value='Only if there’s media attention' required> Only if there’s media attention</label>
+      </div>
+
+      <div class='question-block'><h3>🎯 Question 4</h3>
+        <p><b>What’s a best practice for managing data access?</b></p>
+        <label><input type='radio' name='q4' value='Allow access to all staff' required> Allow access to all staff</label><br>
+        <label><input type='radio' name='q4' value='Role-based access and regular reviews' required> Role-based access and regular reviews</label><br>
+        <label><input type='radio' name='q4' value='Limit access but never review' required> Limit access but never review</label>
+      </div>
+
+      <div class='question-block'><h3>🎯 Question 5</h3>
+        <p><b>What is the correct order of breach response?</b></p>
+        <label><input type='radio' name='q5' value='Notify public, investigate, contain' required> Notify public, investigate, contain</label><br>
+        <label><input type='radio' name='q5' value='Contain, notify legal, document, report' required> Contain, notify legal, document, report</label><br>
+        <label><input type='radio' name='q5' value='Ignore, delete logs, move on' required> Ignore, delete logs, move on</label>
+      </div>
+
+      <br>
+      <button type="submit" class="button">🚀 Submit Answers</button>
+    </form>
+
+    <div id="result" class="result-box"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    document.querySelector('input[name="username"]').value = params.get('username') || "";
+    document.querySelector('input[name="jobid"]').value = params.get('jobid') || "";
+    document.querySelector('input[name="role"]').value = params.get('role') || "Manager";
+
+    document.getElementById("quizForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const form = e.target;
+      let score = 0;
+      if(form.q1.value === 'To protect individual privacy and data') score++;
+      if(form.q2.value === 'Medical history') score++;
+      if(form.q3.value === 'Within 72 hours') score++;
+      if(form.q4.value === 'Role-based access and regular reviews') score++;
+      if(form.q5.value === 'Contain, notify legal, document, report') score++;
+
+      // 🔁 pull from localStorage (set by Streamlit → dashboard)
+      const user_id = localStorage.getItem("user_id");
+      const name    = localStorage.getItem("name");
+      const role    = localStorage.getItem("role") || "Cashier";
+
+      if (!user_id || !name || !role) {
+        alert("Missing user info. Please login again.");
+        return;
+      }
+
+      // ✅ store the quiz context for results.html
+      localStorage.setItem("user_id", user_id);
+      localStorage.setItem("name", name);
+      localStorage.setItem("role", role);
+      localStorage.setItem("training_id", "C-PHISH-01");
+      localStorage.setItem("training_title", "Phishing Awareness");
+      localStorage.setItem("last_quiz_score", String(score));
+
+      // Go to cashier’s results page (same folder)
+      window.location.href = "results.html?topic=Phishing%20Awareness&score="+score+"&role="+encodeURIComponent(role);
+    });
+  </script>
+</body>
+</html>

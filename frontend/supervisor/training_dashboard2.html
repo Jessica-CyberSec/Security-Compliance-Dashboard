@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Supervisor Training Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../config.js"></script>
+  <script>
+(function(){
+  const p = new URLSearchParams(location.search);
+  const uid  = p.get("user_id");
+  const name = p.get("name");
+  const role = p.get("role");
+  if (uid && name && role) {
+    localStorage.setItem("user_id", uid);
+    localStorage.setItem("name", name);
+    localStorage.setItem("role", role);
+  }
+})();
+</script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f2f2;
+      color: #333;
+      padding: 20px;
+    }
+    header {
+      background-color: #6a1b9a;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .info-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    li.completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .training-link {
+      text-decoration: none;
+      color: #6a1b9a;
+      font-weight: bold;
+    }
+    button.complete-btn {
+      float: right;
+      background-color: #7b1fa2;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    h3 {
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #6a1b9a;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .filters, .alerts, .achievements {
+      margin-top: 30px;
+    }
+    select {
+      padding: 5px;
+      margin-right: 10px;
+    }
+    .badge {
+      background: #ffc107;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 12px;
+      margin-left: 10px;
+    }
+    #completionChart {
+      max-width: 300px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>🛡️ Supervisor Training Dashboard</h2>
+    <p>Cybersecurity trainings designed for supervisory roles</p>
+  </header>
+
+  <main>
+    <div class="info-box filters">
+      <h3>🔍 Filter</h3>
+      <select id="departmentFilter" onchange="fetchData()">
+        <option value="All">All Departments</option>
+        <option value="Operations">Operations</option>
+        <option value="Support">Support</option>
+        <option value="Management">Management</option>
+      </select>
+      <select id="riskFilter" onchange="fetchData()">
+        <option value="All">All Risk Tiers</option>
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+      </select>
+      <select id="timeFilter" onchange="fetchData()">
+        <option value="All">All Time</option>
+        <option value="7">Last 7 Days</option>
+        <option value="30">Last 30 Days</option>
+      </select>
+    </div>
+
+    <div class="info-box" id="trainingSection">
+      <h3>📚 Trainings</h3>
+      <ul id="trainingList"></ul>
+    </div>
+
+    <div class="info-box">
+      <h3>📈 Training Completion Overview</h3>
+      <canvas id="completionChart"></canvas>
+    </div>
+
+    <div class="info-box">
+      <h3>🏆 Leaderboard</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Completed Trainings</th>
+            <th>Points</th>
+            <th>Badges</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard"></tbody>
+      </table>
+    </div>
+
+    <div class="info-box alerts">
+      <h3>🚨 Alerts & Nudges</h3>
+      <ul id="alertList"></ul>
+    </div>
+
+    <div class="info-box achievements">
+      <h3>🎖️ Achievement Logs</h3>
+      <ul>
+        <li>Jordan earned “Access Auditor” for configuring accurate role-based controls.</li>
+        <li>Emily earned “Incident Commander” for perfect response protocol in simulations.</li>
+      </ul>
+    </div>
+  </main>
+
+  <script>
+    const trainingItems = [
+      { title: "Role-Based Access Control (RBAC) and Permissions", url: "role-based-access-training-supervisor.html" },
+      { title: "Monitoring and Responding to Cyber Incidents", url: "incident-response-training-supervisor.html" }
+    ];
+
+    const list = document.getElementById('trainingList');
+    const completed = JSON.parse(localStorage.getItem('completedTrainingsSupervisor') || '[]');
+
+    trainingItems.forEach(item => {
+      const li = document.createElement('li');
+      const link = document.createElement('a');
+      const btn = document.createElement('button');
+
+      link.href = item.url;
+      link.innerText = item.title;
+      link.className = 'training-link';
+      link.target = '_blank';
+
+      btn.innerText = completed.includes(item.title) ? "✓ Completed" : "Mark as Done";
+      btn.className = 'complete-btn';
+
+      if (completed.includes(item.title)) {
+        li.classList.add('completed');
+        btn.style.backgroundColor = '#6c757d';
+      }
+
+      btn.onclick = () => {
+        if (!completed.includes(item.title)) {
+          completed.push(item.title);
+          localStorage.setItem('completedTrainingsSupervisor', JSON.stringify(completed));
+          li.classList.add('completed');
+          btn.innerText = "✓ Completed";
+          btn.style.backgroundColor = '#6c757d';
+        }
+      };
+
+      li.appendChild(link);
+      li.appendChild(btn);
+      list.appendChild(li);
+    });
+
+    async function fetchData() {
+      const res = await fetch("https://sheetdb.io/api/v1/avv2xl4lw5vfy");
+      const data = await res.json();
+      updateDashboard(data);
+    }
+
+    function updateDashboard(data) {
+      const dept = document.getElementById("departmentFilter").value;
+      const risk = document.getElementById("riskFilter").value;
+      const days = document.getElementById("timeFilter").value;
+
+      const now = new Date();
+      const leaderboard = document.getElementById("leaderboard");
+      const alerts = document.getElementById("alertList");
+      leaderboard.innerHTML = "";
+      alerts.innerHTML = "";
+
+      const filtered = data.filter(row => {
+        const matchDept = dept === "All" || row.Department === dept;
+        const matchRisk = risk === "All" || row.RiskTier === risk;
+        const matchTime = days === "All" || (now - new Date(row.Date)) / (1000 * 60 * 60 * 24) <= parseInt(days);
+        return matchDept && matchRisk && matchTime;
+      });
+
+      const users = {};
+      let completed = 0;
+      filtered.forEach(row => {
+        if (!users[row.Name]) users[row.Name] = { count: 0, points: 0 };
+        if (row.Status === "Complete") {
+          users[row.Name].count++;
+          users[row.Name].points += parseInt(row.Score || 0);
+          completed++;
+        }
+        if (row.Status === "Incomplete") {
+          alerts.innerHTML += `<li>${row.Name} missed ${row.TrainingTitle}. Retraining scheduled.</li>`;
+        } else if (parseInt(row.Score) < 60) {
+          alerts.innerHTML += `<li>${row.Name} scored low on ${row.TrainingTitle}. Nudge sent using GPT-4: "Would you like a refresher?"</li>`;
+        }
+      });
+
+      Object.entries(users).forEach(([name, { count, points }]) => {
+        const badge = points >= 150 ? "Gold" : points >= 100 ? "Silver" : "Bronze";
+        leaderboard.innerHTML += `<tr><td>${name}</td><td>${count}</td><td>${points}</td><td><span class='badge'>${badge}</span></td></tr>`;
+      });
+
+      const ctx = document.getElementById('completionChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Completed', 'Incomplete'],
+          datasets: [{
+            data: [completed, filtered.length - completed],
+            backgroundColor: ['#7b1fa2', '#c62828']
+          }]
+        },
+        options: {
+          responsive: true
+        }
+      });
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>

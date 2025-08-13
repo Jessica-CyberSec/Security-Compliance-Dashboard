@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🔐 RBAC Training for Supervisors — Challenge Mode</title>
+  <link rel="stylesheet" href="../style_updated_v2.css" />
+  <style>
+    body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#ede7f6,#f3e5f5);margin:0;padding:0;}
+    .wrap{max-width:900px;margin:40px auto;padding:0 16px;}
+    .box{background:#fff;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,.08);padding:32px;text-align:center;}
+    .pillbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0 20px;}
+    .pill{background:#f3e5f5;color:#6a1b9a;border-radius:999px;padding:6px 12px;font-weight:600;font-size:13px;}
+    h1{margin:0 0 10px;color:#6a1b9a}
+    h2{color:#6a1b9a;margin-top:28px}
+    h3{color:#7b1fa2;margin:18px 0 8px}
+    p{margin:8px 0;color:#333}
+    ul,ol{ text-align:left; display:inline-block; margin:0; padding-left:18px }
+    li{margin:6px 0}
+    .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:28px 0 6px;}
+    .button,.ghost{padding:12px 22px;font-size:16px;border:none;border-radius:12px;cursor:pointer;transition:.25s;}
+    .button{background:#6a1b9a;color:#fff}.button:hover{background:#4a148c}
+    .ghost{background:#ede7f6;color:#4a148c}.ghost:hover{background:#e1bee7}
+    .card{background:#fafafa;border-radius:14px;padding:18px 18px;box-shadow:0 4px 12px rgba(0,0,0,.06);margin:12px 0;text-align:left;}
+    .checklist label{display:flex;align-items:center;gap:10px;margin:8px 0;cursor:pointer;}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:#fff3e0;color:#ef6c00;padding:8px 12px;border-radius:12px;font-weight:600;margin-top:8px;}
+    .meta{font-size:14px;color:#555;margin-top:6px}
+    .hr{height:1px;background:#eee;margin:22px 0}
+    .tiny{font-size:12px;color:#666}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
+    @media (max-width:800px){ .row2{ grid-template-columns:1fr } }
+    .done{background:#e8f5e9;border:1px solid #66bb6a;color:#2e7d32;padding:10px 12px;border-radius:10px;font-weight:600;display:none;margin-top:12px;text-align:center;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="box">
+      <h1>🔐 Role‑Based Access Control Training for Supervisors</h1>
+      <div class="pillbar">
+        <span class="pill">🧭 Objective: Enforce Least Privilege</span>
+        <span class="pill">🕒 ~8–10 mins</span>
+        <span class="pill">🏅 Badge on completion</span>
+      </div>
+
+      <div class="meta">
+        <strong>User:</strong> <span id="uName">-</span> •
+        <strong>Job ID:</strong> <span id="uJob">-</span> •
+        <strong>Role:</strong> <span id="uRole">Supervisor</span>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row2">
+        <div class="card">
+          <h2>📌 Objective</h2>
+          <p>Equip supervisors to apply RBAC so employees only access what they need—reducing risk and improving audit readiness.</p>
+
+          <h2>🛡️ What is RBAC?</h2>
+          <p>RBAC assigns permissions by job role. It limits exposure to sensitive data and prevents accidental (or malicious) misuse.</p>
+
+          <h2>🧠 Real‑Life Scenarios</h2>
+          <ul>
+            <li><b>Over‑Privileged Access:</b> A cashier can open finance reports.</li>
+            <li><b>Departing Employee:</b> Stock staff leaves but keeps access to scanners.</li>
+            <li><b>Department Shift:</b> Employee moves teams but retains old rights.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>🔍 Supervisor Responsibilities</h2>
+          <ul>
+            <li>Review team access regularly</li>
+            <li>Revoke/adjust access as roles change</li>
+            <li>Partner with IT to enforce RBAC</li>
+            <li>Coach team on least privilege</li>
+          </ul>
+
+          <h2>💡 Tips for Enforcement</h2>
+          <ul>
+            <li><b>Onboarding:</b> Grant only current-role permissions</li>
+            <li><b>Offboarding:</b> Disable accounts immediately</li>
+            <li><b>Auditing:</b> Monthly access reviews with IT</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>✅ Quick‑Win Checklist</h2>
+        <div class="checklist">
+          <label><input type="checkbox" class="chk" value="review"> I can explain least privilege to my team</label>
+          <label><input type="checkbox" class="chk" value="offboard"> I know the offboarding access removal flow</label>
+          <label><input type="checkbox" class="chk" value="audit"> I scheduled monthly access reviews</label>
+        </div>
+        <button id="markDone" class="button" style="margin-top:10px">🏁 Mark Module Complete</button>
+        <div id="doneNote" class="done">🎉 Marked complete! “RBAC Steward” badge awarded.</div>
+        <div class="badge" id="badgeBox" style="display:none;">🏵️ RBAC Steward</div>
+        <div class="tiny">This completion is saved locally and shown on your Supervisor dashboard.</div>
+      </div>
+
+      <div class="card">
+        <h2>🗣️ Roleplay Example</h2>
+        <blockquote>
+          <p><i>Manager:</i> “Why does the new intern have admin access?”<br>
+          <i>You:</i> “Good catch! I’ll contact IT to fix permissions right away and log the change.”</p>
+        </blockquote>
+      </div>
+
+      <div class="cta-row">
+        <a id="startQuiz" class="button" href="#">🚀 Start Quiz</a>
+        <button class="ghost" id="backBtn">⬅️ Back to Dashboard</button>
+      </div>
+
+      <div class="tiny">Tip: Finish the checklist and quiz to secure your gold badge.</div>
+    </div>
+  </div>
+
+  <script>
+  // --- Read identity from query string (once) ---
+  const params  = new URLSearchParams(location.search);
+  const name    = params.get('name')    || params.get('username') || '';
+  const user_id = params.get('user_id') || params.get('jobid')    || '';
+  const role    = params.get('role')    || 'Supervisor';
+
+  // Show meta
+  document.getElementById('uName').textContent = name || '-';
+  document.getElementById('uJob').textContent  = user_id || '-';
+  document.getElementById('uRole').textContent = role;
+
+  // Persist for other pages (optional)
+  if (name)    localStorage.setItem('name', name);
+  if (user_id) localStorage.setItem('user_id', user_id);
+  localStorage.setItem('display_name', name);
+  localStorage.setItem('role', role);
+
+  // --- Start Quiz: point to the file that exists in /supervisor ---
+  // Folder listing shows: quiz-role-based-access.html
+  const quizQS = new URLSearchParams({
+    name, username: name,   // provide both keys for compatibility
+    user_id, jobid: user_id,
+    role,
+    topic: 'Role-Based Access Control'
+  });
+
+  document.getElementById('startQuiz').addEventListener('click', (e) => {
+    e.preventDefault();
+    location.href = `quiz-role-based-access.html?${quizQS.toString()}`;
+  });
+
+  // --- Back to Dashboard: map role -> folder (no hyphens) ---
+  const ROLE_FOLDER = {
+    'cashier': 'cashier',
+    'supervisor': 'supervisor',
+    'management': 'management',
+    'stock staff': 'stock%20staff'
+  };
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    const folder = ROLE_FOLDER[(role || '').toLowerCase()] || 'supervisor';
+    const backQS = new URLSearchParams({ name, user_id, role });
+    // Absolute path from site root (frontend served as root)
+    location.href = `/${folder}/training_dashboard.html?${backQS.toString()}`;
+  });
+
+  // --- Completion + badge state ---
+  const STORAGE_KEY_GLOBAL = 'completedTrainings';
+  const STORAGE_KEY_ROLE   = 'completedTrainingsSupervisor';
+  const MODULE_TITLE       = 'RBAC for Supervisors';
+
+  const doneNote = document.getElementById('doneNote');
+  const badgeBox = document.getElementById('badgeBox');
+
+  function loadArray(key){ try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; } }
+  function saveArray(key, arr){ localStorage.setItem(key, JSON.stringify(arr)); }
+
+  if (loadArray(STORAGE_KEY_GLOBAL).includes(MODULE_TITLE)){
+    doneNote.style.display = 'block';
+    badgeBox.style.display = 'inline-flex';
+  }
+
+  document.getElementById('markDone').addEventListener('click', () => {
+    const ticks = [...document.querySelectorAll('.chk')].filter(c => c.checked).length;
+    if (ticks < 2){ alert('Please complete at least two checklist items before marking done.'); return; }
+
+    const globalList = loadArray(STORAGE_KEY_GLOBAL);
+    if (!globalList.includes(MODULE_TITLE)){ globalList.push(MODULE_TITLE); saveArray(STORAGE_KEY_GLOBAL, globalList); }
+
+    const roleList = loadArray(STORAGE_KEY_ROLE);
+    if (!roleList.includes(MODULE_TITLE)){ roleList.push(MODULE_TITLE); saveArray(STORAGE_KEY_ROLE, roleList); }
+
+    const userKey = `userProgress_${(role||'supervisor').toLowerCase()}`;
+    const stamp = { name, user_id, role, topic: MODULE_TITLE, status:'Complete', date: new Date().toISOString() };
+    const prog = loadArray(userKey); prog.push(stamp); saveArray(userKey, prog);
+
+    doneNote.style.display = 'block';
+    badgeBox.style.display = 'inline-flex';
+  });
+</script>
+
+</body>
+</html>
+

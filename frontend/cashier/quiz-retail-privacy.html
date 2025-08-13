@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔏 Retail Data Privacy Challenge</title>
+  <link rel="stylesheet" href="../style_updated_v2.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f1f8e9, #e8f5e9);
+      margin: 0;
+      padding: 0;
+    }
+    .box {
+      max-width: 800px;
+      margin: 50px auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h2 {
+      color: #33691e;
+    }
+    .question-block {
+      background: #f0f4c3;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 700px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    .question-block:hover {
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    }
+    .question-block h3 {
+      color: #558b2f;
+    }
+    label {
+      display: block;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    .quiz-progress {
+      text-align: center;
+      margin: 15px 0;
+      font-size: 18px;
+      color: #33691e;
+    }
+    .button {
+      padding: 12px 25px;
+      font-size: 18px;
+      background: #558b2f;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: 0.3s ease;
+    }
+    .button:hover {
+      background: #33691e;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>🔏 Retail Data Privacy Challenge Mode</h2>
+    <p>🛡️ Guard the data. Earn your badge! ⭐</p>
+
+    <form id="quizForm">
+      <input type="hidden" name="topic" value="Retail Data Privacy">
+      <input type="hidden" name="username" value="">
+      <input type="hidden" name="jobid" value="">
+      <input type="hidden" name="role" value="">
+
+      <div class="quiz-progress">🧠 Total Questions: 5 | 🎯 Get them all to become a Privacy Pro!</div>
+
+      <div class='question-block'>
+        <h3>🎯 Question 1</h3>
+        <p><b>What info is considered private customer data?</b></p>
+        <label><input type='radio' name='q1' value='Address'> Address</label>
+        <label><input type='radio' name='q1' value='Loyalty card ID'> Loyalty card ID</label>
+        <label><input type='radio' name='q1' value='All of the above'> All of the above</label>
+      </div>
+
+      <div class='question-block'>
+        <h3>🎯 Question 2</h3>
+        <p><b>How should you handle receipts with sensitive data?</b></p>
+        <label><input type='radio' name='q2' value='Discard in trash'> Discard in trash</label>
+        <label><input type='radio' name='q2' value='Shred'> Shred</label>
+        <label><input type='radio' name='q2' value='Leave on counter'> Leave on counter</label>
+      </div>
+
+      <div class='question-block'>
+        <h3>🎯 Question 3</h3>
+        <p><b>What is a good practice with screens?</b></p>
+        <label><input type='radio' name='q3' value='Always lock when away'> Always lock when away</label>
+        <label><input type='radio' name='q3' value='Leave open'> Leave open</label>
+        <label><input type='radio' name='q3' value='Let others use'> Let others use</label>
+      </div>
+
+      <div class='question-block'>
+        <h3>🎯 Question 4</h3>
+        <p><b>What if a customer asks for another's info?</b></p>
+        <label><input type='radio' name='q4' value='Give it'> Give it</label>
+        <label><input type='radio' name='q4' value='Deny respectfully'> Deny respectfully</label>
+        <label><input type='radio' name='q4' value='Check database'> Check database</label>
+      </div>
+
+      <div class='question-block'>
+        <h3>🎯 Question 5</h3>
+        <p><b>Who do you report data breaches to?</b></p>
+        <label><input type='radio' name='q5' value='No one'> No one</label>
+        <label><input type='radio' name='q5' value='Supervisor or IT'> Supervisor or IT</label>
+        <label><input type='radio' name='q5' value='Customer'> Customer</label>
+      </div>
+
+      <button type="submit" class="button">🚀 Submit Answers</button>
+    </form>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    document.querySelector('input[name="username"]').value = params.get('username') || "";
+    document.querySelector('input[name="jobid"]').value = params.get('jobid') || "";
+    document.querySelector('input[name="role"]').value = params.get('role') || "";
+
+    document.getElementById("quizForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const form = e.target;
+      let score = 0;
+
+      if(form.q1.value === 'All of the above') score++;
+      if(form.q2.value === 'Shred') score++;
+      if(form.q3.value === 'Always lock when away') score++;
+      if(form.q4.value === 'Deny respectfully') score++;
+      if(form.q5.value === 'Supervisor or IT') score++;
+
+      // 🔁 pull from localStorage (set by Streamlit → dashboard)
+      const user_id = localStorage.getItem("user_id");
+      const name    = localStorage.getItem("name");
+      const role    = localStorage.getItem("role") || "Cashier";
+
+      if (!user_id || !name || !role) {
+        alert("Missing user info. Please login again.");
+        return;
+      }
+
+      // ✅ store the quiz context for results.html
+      localStorage.setItem("user_id", user_id);
+      localStorage.setItem("name", name);
+      localStorage.setItem("role", role);
+      localStorage.setItem("training_id", "C-PHISH-01");
+      localStorage.setItem("training_title", "Phishing Awareness");
+      localStorage.setItem("last_quiz_score", String(score));
+
+      // Go to cashier’s results page (same folder)
+      window.location.href = "results.html?topic=Phishing%20Awareness&score="+score+"&role="+encodeURIComponent(role);
+    });
+  </script>
+</body>
+</html>

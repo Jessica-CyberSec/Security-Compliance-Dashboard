@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📦 Stock Staff Cybersecurity Quiz</title>
+  <link rel="stylesheet" href="../style_updated_v2.css" />
+  <style>
+    body{
+      font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+      background: linear-gradient(135deg,#e3f2fd,#e8f5e9);
+      margin:0; padding:0;
+    }
+    .box{
+      max-width: 900px; margin: 48px auto; background:#fff;
+      padding: 28px; border-radius: 22px; text-align:center;
+      box-shadow: 0 12px 28px rgba(0,0,0,.12);
+    }
+    h2{ color:#1565c0; margin-top:0; }
+    .sub{
+      color:#2e7d32; font-weight:600; margin:8px 0 20px;
+    }
+
+    /* Progress + badge */
+    .meta {
+      display:flex; gap:16px; align-items:center; justify-content:center; flex-wrap:wrap;
+      margin: 6px 0 18px;
+    }
+    .pill {
+      background:#e8f0fe; color:#1a73e8; border-radius:999px; padding:6px 12px; font-weight:600;
+    }
+    .badge {
+      background:#fff8e1; color:#f57f17; border-radius:999px; padding:6px 12px; font-weight:700;
+    }
+    .bar-wrap { width:100%; max-width:520px; height:10px; background:#eceff1; border-radius:999px; margin:8px auto 18px; overflow:hidden; }
+    .bar { height:100%; width:0%; background:linear-gradient(90deg,#42a5f5,#66bb6a); transition:width .25s ease; }
+
+    .question-block{
+      text-align:left; background:#f9fbf9; border:1px solid #edf2ee;
+      padding:18px; border-radius:14px; margin:16px auto; max-width:760px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.06);
+    }
+    .question-block h3{ margin: 0 0 10px; color:#1565c0; }
+    label{
+      display:block; margin:10px 0; padding:8px 10px; border-radius:10px; cursor:pointer;
+      transition: background .15s ease, transform .05s ease;
+    }
+    label:hover{ background:#eef7ff; }
+    input[type="radio"]{ margin-right:8px; }
+
+    /* Centered submit */
+    .actions{ display:flex; justify-content:center; margin-top:18px; }
+    .button{
+      padding:12px 28px; font-size:18px; border:none; border-radius:12px;
+      background:#1565c0; color:#fff; cursor:pointer; transition:.2s ease; box-shadow:0 6px 14px rgba(21,101,192,.25);
+    }
+    .button:hover{ background:#0d47a1; transform: translateY(-1px); }
+
+    /* Result toast (shown before redirect) */
+    .result-box{
+      display:none; margin:18px auto 0; max-width:640px;
+      background:#e3f2fd; color:#0d47a1; padding:16px; border-radius:12px; font-weight:700;
+    }
+
+    /* Tiny helpers */
+    .muted{ color:#607d8b; font-size:14px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>📦 Stock Staff Cybersecurity Quiz</h2>
+    <div class="sub">🛡️ Keep shared devices secure and your stockroom safe</div>
+
+    <div class="meta">
+      <div class="pill">🧠 5 Questions</div>
+      <div class="pill"><span id="progressCount">0</span>/5 answered</div>
+      <div class="badge" id="liveBadge">Bronze Candidate</div>
+    </div>
+    <div class="bar-wrap"><div class="bar" id="bar"></div></div>
+
+    <form id="quizForm" autocomplete="off">
+      <!-- carry user context from dashboard url -->
+      <input type="hidden" name="topic" value="Cybersecurity Awareness - Stock Staff" />
+      <input type="hidden" name="username" value="" />
+      <input type="hidden" name="jobid" value="" />
+      <input type="hidden" name="role" value="Stock Staff" />
+
+      <div class="question-block">
+        <h3>1) What should you do after using a handheld scanner?</h3>
+        <label><input type="radio" name="q1" value="Log out" required/>Log out</label>
+        <label><input type="radio" name="q1" value="Leave it on" />Leave it on</label>
+        <label><input type="radio" name="q1" value="Give to a friend" />Give to a friend</label>
+      </div>
+
+      <div class="question-block">
+        <h3>2) Why should you avoid public Wi‑Fi when using inventory devices?</h3>
+        <label><input type="radio" name="q2" value="It may be slow" required/>It may be slow</label>
+        <label><input type="radio" name="q2" value="It may expose data" />It may expose data</label>
+        <label><input type="radio" name="q2" value="It saves battery" />It saves battery</label>
+      </div>
+
+      <div class="question-block">
+        <h3>3) Which of the following is a safe practice?</h3>
+        <label><input type="radio" name="q3" value="Install any apps" required/>Install any apps</label>
+        <label><input type="radio" name="q3" value="Only use approved tools" />Only use approved tools</label>
+        <label><input type="radio" name="q3" value="Share login credentials" />Share login credentials</label>
+      </div>
+
+      <div class="question-block">
+        <h3>4) What should you do if you see a suspicious app on a stockroom device?</h3>
+        <label><input type="radio" name="q4" value="Report it" required/>Report it</label>
+        <label><input type="radio" name="q4" value="Ignore it" />Ignore it</label>
+        <label><input type="radio" name="q4" value="Try using it" />Try using it</label>
+      </div>
+
+      <div class="question-block">
+        <h3>5) Which device usage behavior is <u>NOT</u> acceptable?</h3>
+        <label><input type="radio" name="q5" value="Leaving it logged in" required/>Leaving it logged in</label>
+        <label><input type="radio" name="q5" value="Locking it when not in use" />Locking it when not in use</label>
+        <label><input type="radio" name="q5" value="Using secure network" />Using secure network</label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="button">🚀 Submit Answers</button>
+      </div>
+      <div id="result" class="result-box"></div>
+      <div class="muted">Your best score unlocks badges on your dashboard.</div>
+    </form>
+  </div>
+
+  <script>
+    // ---- Carry user context from dashboard (username, jobid, role) ----
+    (function hydrateHiddenFields() {
+      const params = new URLSearchParams(window.location.search);
+      const u = params.get('username') || params.get('name') || '';
+      const j = params.get('jobid') || params.get('user_id') || '';
+      const r = params.get('role') || 'Stock Staff';
+
+      document.querySelector('input[name="username"]').value = u;
+      document.querySelector('input[name="jobid"]').value    = j;
+      document.querySelector('input[name="role"]').value     = r;
+    })();
+
+    // ---- Gamified progress + live badge preview ----
+    const total = 5;
+    const progressCount = document.getElementById('progressCount');
+    const bar = document.getElementById('bar');
+    const badgeEl = document.getElementById('liveBadge');
+
+    function computeAnswered() {
+      let answered = 0;
+      for (let i=1;i<=total;i++){
+        const any = document.querySelector(`input[name="q${i}"]:checked`);
+        if(any) answered++;
+      }
+      return answered;
+    }
+    function liveBadge(scoreLike){
+      if(scoreLike === 5) return "Gold • Device Defender";
+      if(scoreLike >= 4)  return "Silver • Secure Operator";
+      if(scoreLike >= 3)  return "Bronze • Safety Builder";
+      return "Bronze Candidate";
+    }
+    function updateProgress(){
+      const a = computeAnswered();
+      progressCount.textContent = a;
+      const pct = Math.round((a/total)*100);
+      bar.style.width = pct + '%';
+      badgeEl.textContent = liveBadge(a); // playful preview
+    }
+    document.addEventListener('change', e=>{
+      if(e.target.matches('input[type="radio"]')) updateProgress();
+    });
+    updateProgress();
+
+    // ---- Confetti (lightweight) ----
+    function confettiBurst() {
+      const colors = ['#42a5f5','#66bb6a','#ffd54f','#ef5350','#ab47bc'];
+      for (let i=0;i<18;i++){
+        const d = document.createElement('div');
+        d.style.position='fixed';
+        d.style.left = (Math.random()*100)+'vw';
+        d.style.top = '-10px';
+        d.style.width = d.style.height = (6+Math.random()*6)+'px';
+        d.style.background = colors[i % colors.length];
+        d.style.opacity = .9;
+        d.style.transform = `rotate(${Math.random()*360}deg)`;
+        d.style.borderRadius='2px';
+        d.style.zIndex=9999;
+        document.body.appendChild(d);
+        const fall = 700 + Math.random()*900;
+        d.animate([
+          { transform: d.style.transform, top: '-10px' },
+          { transform: `rotate(${Math.random()*360}deg)`, top: '110vh' }
+        ], { duration: fall, easing: 'cubic-bezier(.2,.8,.2,1)' });
+        setTimeout(()=> d.remove(), fall);
+      }
+    }
+
+    // ---- Submit + scoring + save + redirect to central results.html ----
+    document.getElementById("quizForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const form = e.target;
+
+      let score = 0;
+      if(form.q1.value === "Log out") score++;
+      if(form.q2.value === "It may expose data") score++;
+      if(form.q3.value === "Only use approved tools") score++;
+      if(form.q4.value === "Report it") score++;
+      if(form.q5.value === "Leaving it logged in") score++;
+
+      // Mini celebration + immediate feedback (before redirect)
+      const resultBox = document.getElementById("result");
+      resultBox.style.display = "block";
+      if(score === 5){
+        resultBox.innerHTML = `🎉 Excellent! You scored <strong>5/5</strong>. 🥇 Stockroom Security Star!`;
+        confettiBurst();
+      } else if(score >= 3){
+        resultBox.innerHTML = `✅ You scored <strong>${score}/5</strong>. 👍 Good job! Keep practicing safe device habits.`;
+      } else {
+        resultBox.innerHTML = `⚠️ You scored <strong>${score}/5</strong>. 🛠️ Review best practices and try again.`;
+      }
+
+      // Persist to localStorage for dashboards
+      const topic    = form.topic.value || "Cybersecurity Awareness - Stock Staff";
+      const username = form.username.value || "";
+      const jobid    = form.jobid.value || "";
+      const role     = form.role.value || "Stock Staff";
+      const today    = new Date().toISOString().split("T")[0];
+
+      const newResult = { username, jobid, topic, score: `${score}/5`, date: today, role };
+      const key = "quizResults";
+      const existing = JSON.parse(localStorage.getItem(key) || "[]");
+      existing.push(newResult);
+      localStorage.setItem(key, JSON.stringify(existing));
+
+      // optional: mark completion for role page
+      const doneKey = "completedTrainings";
+      const done = JSON.parse(localStorage.getItem(doneKey) || "[]");
+      if(!done.includes(topic)){
+        done.push(topic);
+        localStorage.setItem(doneKey, JSON.stringify(done));
+      }
+
+      // Redirect to centralized results page (root ../results.html)
+      const params = new URLSearchParams({
+        username, jobid, role, topic, score: String(score)
+      });
+      // short delay so the user sees the toast/confetti
+      setTimeout(()=>{
+        window.location.href = `../results.html?${params.toString()}`;
+      }, 600);
+    });
+  </script>
+</body>
+</html>
+

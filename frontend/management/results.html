@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Results</title>
+  <link rel="stylesheet" href="../style_updated_v2.css">
+  <script src="../config.js"></script>
+  <style>
+    .box {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 30px;
+      background-color: #f4f4f4;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h2 {
+      color: #333;
+    }
+    .summary {
+      margin: 20px 0;
+      font-size: 18px;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 25px;
+      font-size: 16px;
+      background-color: #00796b;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .btn:hover {
+      background-color: #004d40;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>✅ Quiz Results Submitted</h2>
+    <p class="summary">Thank you for completing the quiz. Your responses and score have been recorded.</p>
+    <p class="summary"><b>Role:</b> <span id="roleText">Manager</span></p>
+    <p class="summary"><b>Topic:</b> <span id="topicText">Training</span></p>
+    <p class="summary"><b>Score:</b> <span id="scoreText">0</span>/5</p>
+    <a href="dashboard_management.html" class="btn">🏠 Return to Dashboard</a>
+  </div>
+
+  <!-- at the top of <head> or before your script uses APPS_SCRIPT_URL -->
+<script src="../config.js"></script>
+
+<script>
+function markCompletionAndReturn(){
+  const user_id        = localStorage.getItem("user_id");
+  const name           = localStorage.getItem("name");
+  const role           = localStorage.getItem("role");              // "Cashier" / "Supervisor" / etc.
+  const training_id    = localStorage.getItem("training_id");
+  const training_title = localStorage.getItem("training_title");
+  const score          = Number(localStorage.getItem("last_quiz_score") || 0);
+
+  const params = new URLSearchParams();
+  params.append("action","log_completion");
+  params.append("data", JSON.stringify({
+    user_id, name, role, training_id, training_title,
+    completed: true, score, source:"quiz"
+  }));
+
+  fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    headers: {"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+    body: params.toString()
+  }).catch(console.error)
+    .finally(() => {
+      // results.html lives in the SAME folder as the dashboard
+      window.location.href = "training_dashboard.html";
+    });
+}
+</script>
+
+<button class="button" onclick="markCompletionAndReturn()">🏠 Back to Training Dashboard</button>
+
+</body>
+</html>

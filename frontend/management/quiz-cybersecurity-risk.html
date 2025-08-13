@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔐 Cybersecurity Risk Management Quiz</title>
+  <link rel="stylesheet" href="../style_updated_v2.css">
+  <style>
+    .question-block {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 700px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    .question-block:hover {
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    }
+    .question-block h3 {
+      color: #6a1b9a;
+    }
+    .quiz-progress {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 18px;
+    }
+    .result-box {
+      background: #f3e5f5;
+      color: #6a1b9a;
+      font-weight: bold;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 600px;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>🔐 Cybersecurity Risk Management Quiz</h2>
+    <p>Test your readiness to handle real-world cybersecurity risks as a manager.</p>
+    <form id="quizForm">
+      <input type="hidden" name="topic" value="Cybersecurity Risk">
+      <input type="hidden" name="username" value="">
+      <input type="hidden" name="jobid" value="">
+      <input type="hidden" name="role" value="Manager">
+
+      <div class="quiz-progress">🧠 Total Questions: 5</div>
+
+      <div class='question-block'><h3>🎯 Question 1</h3>
+        <p><b>What is the first step when a cyber incident is detected?</b></p>
+        <label><input type='radio' name='q1' value='Contain the threat' required> Contain the threat</label><br>
+        <label><input type='radio' name='q1' value='Inform the public' required> Inform the public</label><br>
+        <label><input type='radio' name='q1' value='Delete logs' required> Delete logs</label>
+      </div>
+
+      <div class='question-block'><h3>🎯 Question 2</h3>
+        <p><b>What is a cybersecurity risk register used for?</b></p>
+        <label><input type='radio' name='q2' value='To track employee leave' required> To track employee leave</label><br>
+        <label><input type='radio' name='q2' value='To manage company inventory' required> To manage company inventory</label><br>
+        <label><input type='radio' name='q2' value='To document threats and mitigation plans' required> To document threats and mitigation plans</label>
+      </div>
+
+      <div class='question-block'><h3>🎯 Question 3</h3>
+        <p><b>What is a sign of an insider threat?</b></p>
+        <label><input type='radio' name='q3' value='Excessive access privileges' required> Excessive access privileges</label><br>
+        <label><input type='radio' name='q3' value='Weekly system updates' required> Weekly system updates</label><br>
+        <label><input type='radio' name='q3' value='Strong password usage' required> Strong password usage</label>
+      </div>
+
+      <div class='question-block'><h3>🎯 Question 4</h3>
+        <p><b>Which of the following helps ensure business continuity after an attack?</b></p>
+        <label><input type='radio' name='q4' value='Disaster recovery plan' required> Disaster recovery plan</label><br>
+        <label><input type='radio' name='q4' value='Company birthday calendar' required> Company birthday calendar</label><br>
+        <label><input type='radio' name='q4' value='Social media strategy' required> Social media strategy</label>
+      </div>
+
+      <div class='question-block'><h3>🎯 Question 5</h3>
+        <p><b>What should a manager do if a team member reports a suspicious link?</b></p>
+        <label><input type='radio' name='q5' value='Forward it to others' required> Forward it to others</label><br>
+        <label><input type='radio' name='q5' value='Ignore it' required> Ignore it</label><br>
+        <label><input type='radio' name='q5' value='Isolate the system and alert IT' required> Isolate the system and alert IT</label>
+      </div>
+
+      <br>
+      <button type="submit" class="button">🚀 Submit Answers</button>
+    </form>
+
+    <div id="result" class="result-box"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    document.querySelector('input[name="username"]').value = params.get('username') || "";
+    document.querySelector('input[name="jobid"]').value = params.get('jobid') || "";
+    document.querySelector('input[name="role"]').value = params.get('role') || "Manager";
+
+    document.getElementById("quizForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const form = e.target;
+      let score = 0;
+      if(form.q1.value === 'Contain the threat') score++;
+      if(form.q2.value === 'To document threats and mitigation plans') score++;
+      if(form.q3.value === 'Excessive access privileges') score++;
+      if(form.q4.value === 'Disaster recovery plan') score++;
+      if(form.q5.value === 'Isolate the system and alert IT') score++;
+
+      // 🔁 pull from localStorage (set by Streamlit → dashboard)
+      const user_id = localStorage.getItem("user_id");
+      const name    = localStorage.getItem("name");
+      const role    = localStorage.getItem("role") || "Cashier";
+
+      if (!user_id || !name || !role) {
+        alert("Missing user info. Please login again.");
+        return;
+      }
+
+      // ✅ store the quiz context for results.html
+      localStorage.setItem("user_id", user_id);
+      localStorage.setItem("name", name);
+      localStorage.setItem("role", role);
+      localStorage.setItem("training_id", "C-PHISH-01");
+      localStorage.setItem("training_title", "Phishing Awareness");
+      localStorage.setItem("last_quiz_score", String(score));
+
+      // Go to cashier’s results page (same folder)
+      window.location.href = "results.html?topic=Phishing%20Awareness&score="+score+"&role="+encodeURIComponent(role);
+    });
+  </script>
+</body>
+</html>

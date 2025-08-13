@@ -1,0 +1,98 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, #f1f8ff, #e0f7fa);
+  color: #333;
+}
+
+header {
+  background: #0288d1;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  background-color: #e1f5fe;
+  border-bottom: 1px solid #b3e5fc;
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+select {
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  background: #ffffff;
+  margin-top: 4px;
+}
+
+main {
+  padding: 20px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.info-box {
+  background: white;
+  margin: 25px 0;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+canvas {
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto;
+  display: block;
+}
+
+button {
+  background-color: #0288d1;
+  color: white;
+  padding: 10px 18px;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 15px;
+  margin-right: 10px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0277bd;
+}
+
+#trainings {
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-left: 5px solid #0288d1;
+}
+#trainingList {
+  list-style: none;
+  padding-left: 0;
+}
+
+#trainingList li {
+  background-color: #e3f2fd;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}

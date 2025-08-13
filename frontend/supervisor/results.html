@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎉 Quiz Results</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- If this file is /frontend/supervisor/results.html use ../style_updated_v2.css -->
+  <link rel="stylesheet" href="../style_updated_v2.css" />
+  <style>
+    :root{ --violet:#6a1b9a; --violet-dark:#4a148c; --bg1:#fce4ec; --bg2:#f3e5f5; }
+    body{ font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+          background: linear-gradient(135deg,var(--bg1),var(--bg2)); margin:0; padding:24px; }
+    .card{ max-width:980px; margin:24px auto; background:#fff; border-radius:20px;
+           box-shadow:0 10px 25px rgba(0,0,0,.08); padding:28px; animation:pop .45s ease; }
+    header h1{ margin:0 0 6px; color:var(--violet) }
+    header p{ margin:0; color:#5f5f5f }
+    .pill{ display:inline-block; padding:6px 12px; border-radius:999px; background:#f3e5f5;
+           color:var(--violet); font-weight:600; font-size:13px; margin-left:8px; }
+    .hero{ display:grid; grid-template-columns:1.2fr .8fr; gap:18px; align-items:start; }
+    .score{ background:#f3e5f5; color:var(--violet-dark); padding:14px; border-radius:12px;
+            font-size:18px; font-weight:600; text-align:center; }
+    .facts{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    .fact{ background:#faf7fd; border:1px solid #eadcf6; padding:12px; border-radius:10px; font-size:14px; }
+    table{ width:100%; border-collapse:collapse; background:#fff; border-radius:14px; overflow:hidden; }
+    th,td{ padding:12px 10px; text-align:center; border-bottom:1px solid #eee; }
+    th{ background:var(--violet); color:#fff; }
+    tr:nth-child(even){ background:#fafafa; }
+    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:16px 0; }
+    .btn{ border:0; background:var(--violet); color:#fff; padding:10px 16px; border-radius:10px;
+          cursor:pointer; font-weight:600; transition:.2s ease; text-decoration:none; display:inline-flex; gap:8px; }
+    .btn:hover{ background:var(--violet-dark); }
+    select, input[type="search"]{ padding:9px 12px; border-radius:10px; border:1px solid #ddd; outline:0; background:#fff; }
+    .badge{ background:#ffd54f; color:#5d3b00; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:700 }
+    .center{ text-align:center } footer{ color:#777; font-size:12px; text-align:center; margin-top:18px }
+    @keyframes pop{ from{transform:scale(.98);opacity:0} to{transform:scale(1);opacity:1} }
+    @media (max-width:900px){ .hero{grid-template-columns:1fr} .facts{grid-template-columns:1fr 1fr} }
+    @media (max-width:520px){ .facts{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <header>
+      <h1>🎉 Quiz Results <span id="badge" class="pill" style="display:none"></span></h1>
+      <p>Your performance summary and your past attempts</p>
+    </header>
+
+    <section class="hero" style="margin-top:14px">
+      <div>
+        <div id="scoreMsg" class="score">Loading your score...</div>
+        <div class="facts" style="margin-top:12px">
+          <div class="fact"><b>Name:</b> <span id="username">—</span></div>
+          <div class="fact"><b>Job ID:</b> <span id="jobid">—</span></div>
+          <div class="fact"><b>Role:</b> <span id="role">—</span></div>
+          <div class="fact"><b>Topic:</b> <span id="topic">—</span></div>
+        </div>
+
+        <div class="toolbar">
+          <button class="btn" id="backBtn">⬅️ Back to Role Dashboard</button>
+          <button class="btn" id="exportCsv">⬇️ Export CSV</button>
+          <button class="btn" id="clearMyResults" title="Only clears your results (same username)">🧹 Clear My Results</button>
+        </div>
+      </div>
+
+      <div class="center">
+        <div style="font-size:14px;color:#666;margin-bottom:6px">Completion streak</div>
+        <div id="streak" style="font-size:40px;font-weight:800;color:var(--violet)">0 🔥</div>
+        <div style="margin-top:8px"><span id="gamifyBadge" class="badge" style="display:none">New Badge</span></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="card">
+    <div class="toolbar">
+      <input type="search" id="searchUser" placeholder="Search username..." />
+      <select id="filterRole">
+        <option value="All">All roles</option>
+        <option>Cashier</option><option>Stock Staff</option><option>Supervisor</option><option>Management</option>
+      </select>
+      <select id="filterTopic">
+        <option value="All">All topics</option>
+        <option>Password Hygiene</option><option>Phishing Awareness</option><option>Retail Data Privacy</option>
+        <option>RBAC (Supervisors)</option><option>Incident Response (Supervisors)</option><option>Compliance (Management)</option>
+      </select>
+    </div>
+
+    <table aria-label="All attempts saved on this browser">
+      <thead>
+        <tr><th>#</th><th>Username</th><th>Job ID</th><th>Role</th><th>Topic</th><th>Score</th><th>Date</th></tr>
+      </thead>
+      <tbody id="resultTableBody"></tbody>
+    </table>
+    <footer>Results are saved in this browser (localStorage) and posted to Google Sheets if configured.</footer>
+  </div>
+
+<script>
+(function(){
+  const SHEETDB_API = "https://sheetdb.io/api/v1/rpfzp6uq9dv4w"; // put your real ID here
+
+  // --- Helpers ---
+  const qs = new URLSearchParams(location.search);
+  const get = (k, d="") => (qs.get(k) || d).trim();
+
+  const username = get("username","Unknown");
+  const jobid    = get("jobid","N/A");
+  const roleRaw  = get("role", localStorage.getItem('role') || "general");
+  const role     = normalizeRole(roleRaw);
+  const topic    = get("topic","N/A");
+  const rawScore = get("score","0");
+  const scoreNum = Number.isFinite(+rawScore) ? +rawScore : 0;
+  const scoreText= `${scoreNum}/5`;
+  const dateStr  = new Date().toISOString().split("T")[0];
+
+  // Display current result details
+  setText("username", username);
+  setText("jobid", jobid);
+  setText("role", role);
+  setText("topic", topic);
+  renderScore(scoreNum);
+
+  // Persist result(s)
+  const newResult = { username, jobid, role, topic, score: scoreText, date: dateStr };
+  const allResults = saveResult(newResult);
+
+  // Broadcast
+  try{ localStorage.setItem("lastResultBroadcast", JSON.stringify({ts: Date.now(), result: newResult})); }catch(_){}
+
+  // Streak + badges
+  renderStreak(username, allResults);
+  if (scoreNum === 5) { show("gamifyBadge"); setText("gamifyBadge","🥇 Perfect Run"); show("badge"); setText("badge","Badge: Perfect Score"); }
+
+  // Optional: upload to Sheets via SheetDB
+  if (!SHEETDB_API.includes("YOUR_SHEETDB_API_ID")) uploadToSheetDB(SHEETDB_API, newResult);
+
+  // Table + filters
+  const state = { search:"", role:"All", topic:"All" };
+  const tbody = document.getElementById("resultTableBody");
+  const searchUser = document.getElementById("searchUser");
+  const filterRole  = document.getElementById("filterRole");
+  const filterTopic = document.getElementById("filterTopic");
+
+  searchUser.addEventListener("input", ()=>{ state.search = searchUser.value.toLowerCase(); renderTable(); });
+  filterRole.addEventListener("change", ()=>{ state.role = filterRole.value; renderTable(); });
+  filterTopic.addEventListener("change", ()=>{ state.topic = filterTopic.value; renderTable(); });
+
+  function renderTable(){
+    const data = JSON.parse(localStorage.getItem("quizResults") || "[]");
+    const view = data.filter(r => {
+      const matchUser  = !state.search || (r.username||"").toLowerCase().includes(state.search);
+      const matchRole  = state.role==="All" || (r.role||"").toLowerCase() === state.role.toLowerCase();
+      const matchTopic = state.topic==="All" || (r.topic||"") === state.topic;
+      return matchUser && matchRole && matchTopic;
+    });
+    tbody.innerHTML = view.map((r,i)=>`
+      <tr>
+        <td>${i+1}</td>
+        <td>${escapeHtml(r.username)}</td>
+        <td>${escapeHtml(r.jobid)}</td>
+        <td>${escapeHtml(r.role || "")}</td>
+        <td>${escapeHtml(r.topic)}</td>
+        <td><b>${escapeHtml(r.score)}</b></td>
+        <td>${escapeHtml(r.date)}</td>
+      </tr>`).join("");
+  }
+  renderTable();
+
+  // ------- FIXED: Back to dashboard (root‑absolute, never doubles folder) -------
+  const ROLE_FOLDER = {
+    'cashier': 'cashier',
+    'supervisor': 'supervisor',
+    'management': 'management',
+    'stock staff': 'stock%20staff' // encode the space
+  };
+  const folder = ROLE_FOLDER[(roleRaw || '').toLowerCase()] || 'supervisor';
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    const backQS = new URLSearchParams({ username, jobid, role: roleRaw || 'Supervisor' });
+    // Use origin + leading slash so path is absolute from site root
+    window.location.href = `${location.origin}/${folder}/training_dashboard.html?${backQS.toString()}`;
+  });
+  // ---------------------------------------------------------------------------
+
+  // Export CSV
+  document.getElementById("exportCsv").addEventListener("click", ()=>{
+    const rows = JSON.parse(localStorage.getItem("quizResults") || "[]");
+    const csv  = toCsv(rows);
+    const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `quiz-results-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // Clear only my results (same username)
+  document.getElementById("clearMyResults").addEventListener("click", ()=>{
+    const existing = JSON.parse(localStorage.getItem("quizResults") || "[]");
+    const filtered = existing.filter(r => (r.username || "") !== username);
+    localStorage.setItem("quizResults", JSON.stringify(filtered));
+    renderTable();
+    alert("Cleared results for: " + username);
+  });
+
+  // --- functions ---
+  function renderScore(s){
+    const el = document.getElementById("scoreMsg");
+    if (s === 5)      el.innerHTML = `🎯 Perfect Score: <strong>${s}/5</strong> — You're a certified expert! 🥇`;
+    else if (s >= 3)  el.innerHTML = `✅ You scored <strong>${s}/5</strong>. Great job! Keep practicing. 💪`;
+    else              el.innerHTML = `⚠️ You scored <strong>${s}/5</strong>. 📘 Please review and try again.`;
+  }
+
+  function saveResult(result){
+    const key = "quizResults";
+    const roleKey = `quizResults:${slugifyRole(role)}`;
+    const all = JSON.parse(localStorage.getItem(key) || "[]"); all.push(result);
+    localStorage.setItem(key, JSON.stringify(all));
+    const roleArr = JSON.parse(localStorage.getItem(roleKey) || "[]"); roleArr.push(result);
+    localStorage.setItem(roleKey, JSON.stringify(roleArr));
+    const completedKey = "completedTrainings";
+    const completed = JSON.parse(localStorage.getItem(completedKey) || "[]");
+    if (!completed.includes(result.topic)) { completed.push(result.topic); localStorage.setItem(completedKey, JSON.stringify(completed)); }
+    return all;
+  }
+
+  function uploadToSheetDB(api, payload){
+    fetch(api, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ data: [payload] }) })
+      .then(r=>r.json()).then(d=>console.log("✔️ Uploaded to Google Sheet", d))
+      .catch(err=>console.error("❌ Upload failed:", err));
+  }
+
+  function renderStreak(name, results){
+    const byUser = results.filter(r => (r.username||"") === name).map(r=>r.date);
+    const days = new Set(byUser);
+    let streak=0; const d = new Date();
+    for(;;){ const key = d.toISOString().split("T")[0]; if (days.has(key)){ streak++; d.setDate(d.getDate()-1); } else break; }
+    setText("streak", `${streak} 🔥`);
+  }
+
+  function normalizeRole(r){
+    const x = (r||"").trim(); if (!x) return "General";
+    const m = { "cashier":"Cashier","stock staff":"Stock Staff","stock":"Stock Staff","supervisor":"Supervisor","management":"Management","manager":"Management","general":"General" };
+    const k = x.toLowerCase(); return m[k] || x.charAt(0).toUpperCase()+x.slice(1);
+  }
+  function slugifyRole(r){ return (r||"general").toLowerCase().replace(/\s+/g,'-'); }
+  function toCsv(rows){
+    if(!rows.length) return "username,jobid,role,topic,score,date\n";
+    const heads = Object.keys(rows[0]);
+    const esc = v => `"${String(v??"").replace(/"/g,'""')}"`;
+    const lines = [heads.join(",")].concat(rows.map(r=>heads.map(h=>esc(r[h])).join(",")));
+    return lines.join("\n");
+  }
+  function setText(id, value){ const el = document.getElementById(id); if (el) el.textContent = value; }
+  function show(id){ const el=document.getElementById(id); if(el) el.style.display='inline-block'; }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+})();
+</script>
+</body>
+</html>
+

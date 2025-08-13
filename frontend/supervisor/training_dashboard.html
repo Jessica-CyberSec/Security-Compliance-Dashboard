@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supervisor Training Dashboard</title>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#f5f7fb; margin:0; }
+    header { background:#0b3d91; color:#fff; padding:16px 20px; }
+    header h1 { margin:0 0 6px 0; font-weight:700; }
+    .sub { opacity:.9; font-size:14px; }
+    .bar { display:flex; gap:10px; padding:14px 20px; background:#fff; border-bottom:1px solid #e6e8ef; }
+    label { font-size:14px; color:#111; }
+    select { padding:8px 10px; border:1px solid #d6dae3; border-radius:8px; background:#fff; }
+    main { padding:18px; display:grid; grid-template-columns: 320px 1fr; gap:18px; }
+    .card { background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(2,6,23,.06); padding:16px; }
+    .muted { color:#6b7280; font-size:12px; }
+    /* trainings */
+    #trainingList li { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px; border:1px solid #eef0f5; border-radius:10px; margin-bottom:10px; background:#fff; }
+    .btn { cursor:pointer; border:none; border-radius:10px; padding:10px 14px; font-weight:600; }
+    .btn.primary { background:#2563eb; color:#fff; }
+    .btn.done { background:#6c757d; color:#fff; }
+    /* leaderboard */
+    table { width:100%; border-collapse:collapse; }
+    thead th { text-align:left; background:#1e40af; color:#fff; padding:12px; }
+    tbody td { padding:12px; border-bottom:1px solid #eef0f5; }
+    .badge { display:inline-block; padding:4px 10px; border-radius:999px; background:#eef2ff; color:#1e40af; font-weight:700; }
+    .grid-2 { display:grid; grid-template-columns: 380px 1fr; gap:18px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Supervisor Training Dashboard</h1>
+    <div class="sub" id="whoami">Loading user…</div>
+  </header>
+
+  <div class="bar">
+    <label>Department:
+      <select id="departmentFilter">
+        <option value="All">All</option>
+        <option>Frontline</option>
+        <option>Back Office</option>
+        <option>IT</option>
+      </select>
+    </label>
+    <label>Risk:
+      <select id="riskFilter">
+        <option value="All">All</option>
+        <option>Low</option>
+        <option>Medium</option>
+        <option>High</option>
+      </select>
+    </label>
+    <label>Time:
+      <select id="timeFilter">
+        <option value="All">All Time</option>
+        <option value="7">Last 7 days</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 90 days</option>
+      </select>
+    </label>
+  </div>
+
+  <main>
+    <!-- Left column: Trainings -->
+    <section class="card">
+      <h3>📚 Trainings</h3>
+      <ul id="trainingList" style="list-style:none; padding-left:0; margin-top:14px;"></ul>
+    </section>
+
+    <!-- Right column: Pie + Alerts -->
+    <section class="grid-2">
+      <div class="card">
+        <h3>📈 Completion Overview</h3>
+        <div style="max-width:360px">
+          <canvas id="completionChart" width="360" height="360"></canvas>
+        </div>
+        <div id="completionText" class="muted" style="margin-top:8px">0/0 completed · 0%</div>
+      </div>
+
+      <div class="card">
+        <h3>🔔 Alerts</h3>
+        <ul id="alertList" style="list-style:disc; margin-left:18px; color:#374151;"></ul>
+      </div>
+    </section>
+  </main>
+
+  <section class="card" style="margin:18px;">
+    <h3>🏆 Leaderboard</h3>
+    <table>
+      <thead>
+        <tr><th style="width:40%">Name</th><th>Completed</th><th>Points</th><th>Badge</th></tr>
+      </thead>
+      <tbody id="leaderboard"></tbody>
+    </table>
+  </section>
+
+  <script src="supervisor_dashboard.js?v=2.2.0"></script>
+  <script>
+    // Accept return from results.html (?completed=&score=)
+    (function handleCompletedParams(){
+      const p = new URLSearchParams(location.search);
+      const completed = p.get("completed");
+      const score = p.get("score");
+      if (completed) {
+        // bubble an event the JS listens for
+        window.dispatchEvent(new CustomEvent("module-completed",{detail:{title:completed, score}}));
+        // strip params
+        history.replaceState({}, document.title, location.pathname);
+      }
+    })();
+  </script>
+</body>
+</html>

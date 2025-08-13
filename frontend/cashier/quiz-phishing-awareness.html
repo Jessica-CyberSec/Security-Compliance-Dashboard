@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🎣 Phishing Awareness Challenge</title>
+  <link rel="stylesheet" href="../style_updated_v2.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #fce4ec, #f3e5f5);
+      margin: 0;
+      padding: 0;
+    }
+    .box {
+      max-width: 800px;
+      margin: 50px auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h2 {
+      color: #ad1457;
+    }
+    .question-block {
+      background: #f9fbe7;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 700px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    .question-block:hover {
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    }
+    .question-block h3 {
+      color: #6a1b9a;
+    }
+    label {
+      display: block;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    .quiz-progress {
+      text-align: center;
+      margin: 15px 0;
+      font-size: 18px;
+      color: #6a1b9a;
+    }
+    .button {
+      padding: 12px 25px;
+      font-size: 18px;
+      background: #6a1b9a;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: 0.3s ease;
+    }
+    .button:hover {
+      background: #4a148c;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>🎣 Phishing Awareness Challenge Mode</h2>
+    <p>🧠 Spot the bait and earn your star badge! ⭐</p>
+
+    <form id="quizForm">
+      <input type="hidden" name="topic" value="Phishing Awareness">
+      <input type="hidden" name="username" value="">
+      <input type="hidden" name="jobid" value="">
+      <input type="hidden" name="role" value="">
+
+      <div class="quiz-progress">🧠 Total Questions: 5 | 🎯 Be alert to phishing traps!</div>
+
+      <div class='question-block'>
+        <h3>🎯 Question 1</h3>
+        <p><b>Which of the following is a red flag in emails?</b></p>
+        <label><input type='radio' name='q1' value='Urgency and threats'> Urgency and threats</label>
+        <label><input type='radio' name='q1' value='Friendly tone'> Friendly tone</label>
+        <label><input type='radio' name='q1' value='Well-known sender'> Well-known sender</label>
+      </div>
+
+      <div class='question-block'>
+        <h3>🎯 Question 2</h3>
+        <p><b>What's the safest action if unsure about a link?</b></p>
+        <label><input type='radio' name='q2' value='Click to inspect'> Click to inspect</label>
+        <label><input type='radio' name='q2' value='Report to IT'> Report to IT</label>
+        <label><input type='radio' name='q2' value='Ignore it'> Ignore it</label>
+      </div>
+
+      <div class='question-block'>
+        <h3>🎯 Question 3</h3>
+        <p><b>Who might impersonators pretend to be?</b></p>
+        <label><input type='radio' name='q3' value='A celebrity'> A celebrity</label>
+        <label><input type='radio' name='q3' value='Your boss'> Your boss</label>
+        <label><input type='radio' name='q3' value='A cashier'> A cashier</label>
+      </div>
+
+      <div class='question-block'>
+        <h3>🎯 Question 4</h3>
+        <p><b>What's the best defense against phishing?</b></p>
+        <label><input type='radio' name='q4' value='Antivirus'> Antivirus</label>
+        <label><input type='radio' name='q4' value='Human awareness'> Human awareness</label>
+        <label><input type='radio' name='q4' value='Firewall'> Firewall</label>
+      </div>
+
+      <div class='question-block'>
+        <h3>🎯 Question 5</h3>
+        <p><b>If you click a bad link, what should you do?</b></p>
+        <label><input type='radio' name='q5' value='Ignore it'> Ignore it</label>
+        <label><input type='radio' name='q5' value='Report and disconnect'> Report and disconnect</label>
+        <label><input type='radio' name='q5' value='Forward it'> Forward it</label>
+      </div>
+
+      <button type="submit" class="button">🚀 Submit Answers</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("quizForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const f = e.target;
+      let score = 0;
+
+      if (f.q1.value === 'Urgency and threats') score++;
+      if (f.q2.value === 'Report to IT')        score++;
+      if (f.q3.value === 'Your boss')           score++;
+      if (f.q4.value === 'Human awareness')     score++;
+      if (f.q5.value === 'Report and disconnect') score++;
+
+      // 🔁 pull from localStorage (set by Streamlit → dashboard)
+      const user_id = localStorage.getItem("user_id");
+      const name    = localStorage.getItem("name");
+      const role    = localStorage.getItem("role") || "Cashier";
+
+      if (!user_id || !name || !role) {
+        alert("Missing user info. Please login again.");
+        return;
+      }
+
+      // ✅ store the quiz context for results.html
+      localStorage.setItem("user_id", user_id);
+      localStorage.setItem("name", name);
+      localStorage.setItem("role", role);
+      localStorage.setItem("training_id", "C-PHISH-01");
+      localStorage.setItem("training_title", "Phishing Awareness");
+      localStorage.setItem("last_quiz_score", String(score));
+
+      // Go to cashier’s results page (same folder)
+      window.location.href = "results.html?topic=Phishing%20Awareness&score="+score+"&role="+encodeURIComponent(role);
+    });
+    </script>
+
+</body>
+</html>
